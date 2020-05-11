@@ -1,4 +1,4 @@
-import express = require('express');
+import express from 'express';
 const router = express.Router();
 
 // define a route handler for the default home page
