@@ -1,18 +1,21 @@
 import axios from "axios";
-import {UserLoginRequest} from "../../../pana-tutor-lib/model/user/user-auth.interface";
+import {UserLoginRequest, UserSignupRequest} from "../../../pana-tutor-lib/model/user/user-auth.interface";
 import {HttpResponse} from "../../../pana-tutor-lib/model/api-response.interface";
 import {handleApiError} from "../common/util";
 
+export class APIHandlerService {
 
-export class AuthService {
-
-    authenticate = async (loginRequest: UserLoginRequest) => {
-
+    doPost = async (requestObj: any, url: string, token?: string) => {
+      console.log('calling api:: ', url)
+      console.log('token@API handler:::', token)
+      const headers = token ? { Authorization: `Bearer ${token}` } : '';
       let responseObj = {} as HttpResponse;
+
       await axios({
           method: 'post',
-          url: '/wp-json/jwt-auth/v1/token',
-          data: loginRequest
+          url,
+          data: requestObj,
+          headers
         })
         .then( response => {
           responseObj.data = response.data;
@@ -25,4 +28,5 @@ export class AuthService {
         console.log(responseObj);
         return responseObj;
     }
+
 }
