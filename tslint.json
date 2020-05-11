@@ -7,7 +7,9 @@
     "rules": {
         "trailing-comma": [ false ],
         "no-var-requires": false,
-        "no-console": false
+        "no-console": false,
+        "no-namespace": false,
+        "no-empty": false
     },
     "rulesDirectory": []
 }
