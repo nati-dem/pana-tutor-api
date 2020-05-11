@@ -1,4 +1,4 @@
-import {APIHandlerService} from "../service/api-handler.service";
+import {APIExecuterService} from "../provider/api-executer.service";
 import {Inject} from "typescript-ioc";
 import {UserLoginRequest, UserSignupRequest} from "../../../pana-tutor-lib/model/user/user-auth.interface";
 import {isSuccessHttpCode} from "../../../pana-tutor-lib/util/common-helper";
@@ -11,11 +11,11 @@ import {AppConstant} from '../config/constants';
 export class AuthHandler {
 
     @Inject
-    private apiHandlerService:APIHandlerService;
+    private apiExecuter:APIExecuterService;
     private appCache = AppCache.getInstance();
 
     authenticate = async (loginRequest: UserLoginRequest) => {
-        return await this.apiHandlerService.doPost(loginRequest, AppConstant.LOGIN_URL);
+        return await this.apiExecuter.doPost(loginRequest, AppConstant.LOGIN_URL);
     }
 
     signup = async (signupRequest: UserSignupRequest) => {
@@ -25,7 +25,7 @@ export class AuthHandler {
         if ( adminToken === undefined ){
             adminToken = await this.getAdminToken();
         }
-        return await this.apiHandlerService.doPost(signupRequest, AppConstant.REGISTER_URL, adminToken);
+        return await this.apiExecuter.doPost(signupRequest, AppConstant.REGISTER_URL, adminToken);
     }
 
     private getAdminToken = async () => {

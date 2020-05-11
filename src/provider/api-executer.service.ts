@@ -3,7 +3,7 @@ import {UserLoginRequest, UserSignupRequest} from "../../../pana-tutor-lib/model
 import {HttpResponse} from "../../../pana-tutor-lib/model/api-response.interface";
 import {handleApiError} from "../common/util";
 
-export class APIHandlerService {
+export class APIExecuterService {
 
     doPost = async (requestObj: any, url: string, token?: string) => {
       console.log('calling api:: ', url)
@@ -16,12 +16,10 @@ export class APIHandlerService {
           url,
           data: requestObj,
           headers
-        })
-        .then( response => {
+        }).then( response => {
           responseObj.data = response.data;
           responseObj.status = response.status;
-        })
-        .catch(err =>
+        }).catch(err =>
           responseObj = handleApiError(err)
         );
 
