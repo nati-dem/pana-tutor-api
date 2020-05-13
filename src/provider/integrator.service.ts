@@ -88,7 +88,7 @@ export class IntegratorService {
         adminToken = tokenResp.data.token;
       }
       // save in cache
-      this.appCache.set( AppConstant.ADMIN_TOKEN_KEY, adminToken, 86400 ); // ttl in sec
+      this.appCache.set( AppConstant.ADMIN_TOKEN_KEY, adminToken, 2 * 86400 ); // ttl in sec ~ 2 days
       return adminToken;
   }
 

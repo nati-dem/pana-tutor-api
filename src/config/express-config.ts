@@ -58,11 +58,7 @@ export class ExpressConfig {
     }
 
     private configureRoutes() {
-
-      // this._app.use('/', indexRouter);
-      this._app.get( `${AppConstant.SERVER_SUB_DIR}/`, ( req, res ) => {
-        res.send( "Hello world!" );
-      } );
+      this._app.use(`${AppConstant.SERVER_SUB_DIR}/`, indexRouter);
       this._app.use(`${AppConstant.SERVER_SUB_DIR}/users`, this.validateToken, this.userRouter.baseRouter);
       this._app.use(`${AppConstant.SERVER_SUB_DIR}/auth`, this.authRouter.baseRouter);
       // this._app.all('*', this.validateToken);
