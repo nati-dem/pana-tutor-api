@@ -1,5 +1,4 @@
 import axios from "axios";
-import {UserLoginRequest, UserSignupRequest} from "../../../pana-tutor-lib/model/user/user-auth.interface";
 import {HttpResponse} from "../../../pana-tutor-lib/model/api-response.interface";
 import {handleApiError} from "../common/util";
 import {ErrorCode, ErrorMessage} from "../../../pana-tutor-lib/enum/constants";
@@ -7,25 +6,16 @@ import {AppError} from '../common/app-error';
 import {AppCache} from '../config/cache-config';
 import {AppConstant} from '../config/constants';
 import {isSuccessHttpCode} from "../../../pana-tutor-lib/util/common-helper";
-
 const jwtDecode = require('jwt-decode');
 
-export class BaseIntegratorService {
+export class IntegratorService {
 
     private appCache = AppCache.getInstance();
 
     doPost = async (requestObj: any, url: string, useAdminToken: boolean, token?:string) => {
       console.log('calling api:: ', url)
       console.log('useAdminToken@API integrator:::', useAdminToken);
-      let headers: any;
-
-      if(useAdminToken) {
-        const adminToken = await this.generateAppToken();
-        headers = { Authorization: `Bearer ${adminToken}` };
-      } else if (token) {
-        headers = { Authorization: `Bearer ${token}` };
-      }
-
+      const headers = await this.getHeaders(useAdminToken, token);
       let responseObj = {} as HttpResponse;
 
       await axios({
@@ -47,14 +37,7 @@ export class BaseIntegratorService {
     doGet = async (context: any, url: string, useAdminToken: boolean, token?:string) => {
       console.log('calling api:: ', url)
       console.log('useAdminToken@API integrator:::', useAdminToken)
-      let headers: any;
-
-      if(useAdminToken) {
-        const adminToken = await this.generateAppToken();
-        headers = { Authorization: `Bearer ${adminToken}` };
-      } else if (token) {
-        headers = { Authorization: `Bearer ${token}` };
-      }
+      const headers = await this.getHeaders(useAdminToken, token);
       let responseObj = {} as HttpResponse;
 
       await axios({
@@ -71,6 +54,17 @@ export class BaseIntegratorService {
 
         console.log('##doGet api resp:: ', responseObj);
         return responseObj;
+    }
+
+    getHeaders = async (useAdminToken, token) => {
+      let headers:any;
+      if(useAdminToken) {
+        const adminToken = await this.generateAppToken();
+        headers = { Authorization: `Bearer ${adminToken}` };
+      } else if (token) {
+        headers = { Authorization: `Bearer ${token}` };
+      }
+      return headers;
     }
 
     generateAppToken = async () => {

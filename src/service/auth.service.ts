@@ -1,4 +1,4 @@
-import {BaseIntegratorService} from "../provider/base-integrator.service";
+import {IntegratorService} from "../provider/integrator.service";
 import {Inject} from "typescript-ioc";
 import {UserLoginRequest, UserSignupRequest} from "../../../pana-tutor-lib/model/user/user-auth.interface";
 import {isSuccessHttpCode} from "../../../pana-tutor-lib/util/common-helper";
@@ -12,7 +12,7 @@ import {AppConstant} from '../config/constants';
 export class AuthService {
 
     @Inject
-    private apiExecuter: BaseIntegratorService;
+    private apiExecuter: IntegratorService;
 
     authenticate = async (loginRequest: UserLoginRequest) => {
         return await this.apiExecuter.doPost(loginRequest, AppConstant.LOGIN_URL, false);
