@@ -12,8 +12,7 @@ const router = express.Router();
 export class AuthRouter {
 
   baseRouter = router.get('/', (req, res, next) => {
-    res.status(200);
-    res.end(JSON.stringify({ a: 1 }));
+    res.send( "Hello world!" );
   });
 
   loginRouter = router.post('/login', asyncHandler(async (req, res, next) => {

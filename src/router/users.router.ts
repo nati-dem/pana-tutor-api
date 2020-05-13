@@ -12,7 +12,7 @@ const router = express.Router();
 export class UserRouter {
 
   baseRouter = router.get('/', (req, res, next) => {
-      res.status(200).end(JSON.stringify({ a: 1 }));
+    res.send( "Hello world!" );
   });
 
   profileRouter = router.get('/profile', asyncHandler ( async (req, res, next) => {
