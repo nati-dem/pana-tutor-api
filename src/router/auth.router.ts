@@ -6,45 +6,45 @@ import {AppError} from '../common/app-error';
 import {HttpResponse} from "../../../pana-tutor-lib/model/api-response.interface";
 import {isSuccessHttpCode} from "../../../pana-tutor-lib/util/common-helper";
 import {ErrorCode, ErrorMessage} from "../../../pana-tutor-lib/enum/constants";
-const asyncHandler = require('express-async-handler')
-
+const asyncHandler = require('express-async-handler');
 const router = express.Router();
 
-export const authRouter = router.get('/', (req, res, next) => {
-  res.status(200);
-  res.end(JSON.stringify({ a: 1 }));
-});
+export class AuthRouter {
 
-export const loginRouter = router.post('/login', asyncHandler(async (req, res, next) => {
-  const authService = new AuthService();
+  defaultRouter = router.get('/', (req, res, next) => {
+    res.status(200);
+    res.end(JSON.stringify({ a: 1 }));
+  });
 
-  const reqObj = req.body as UserLoginRequest;
-  if( isEmpty(reqObj.password) || isEmpty(reqObj.username) ){
-    throw new AppError(400, ErrorMessage.INVALID_PARAM, ErrorCode.INVALID_PARAM, null);
-  }
+  loginRouter = router.post('/login', asyncHandler(async (req, res, next) => {
+    const authService = new AuthService();
 
-  const response: HttpResponse = await authService.authenticate(reqObj);
-  if(!isSuccessHttpCode(response.status)) {
-    throw new AppError(response.status, response.message, ErrorCode.LOGIN_ERROR, JSON.stringify(response.data));
-  }
+    const reqObj = req.body as UserLoginRequest;
+    if( isEmpty(reqObj.password) || isEmpty(reqObj.username) ){
+      throw new AppError(400, ErrorMessage.INVALID_PARAM, ErrorCode.INVALID_PARAM, null);
+    }
 
-  res.status(200)
-     .end(JSON.stringify(response.data));
-}));
+    const response: HttpResponse = await authService.authenticate(reqObj);
+    if(!isSuccessHttpCode(response.status)) {
+      throw new AppError(response.status, response.message, ErrorCode.LOGIN_ERROR, JSON.stringify(response.data));
+    }
 
-export const registerRouter = router.post('/register', asyncHandler(async (req, res, next) => {
-  const authService = new AuthService();
-  // TODO - validate here
-  const reqObj = req.body as UserSignupRequest;
-  if( isEmpty(reqObj.password) || isEmpty(reqObj.username) ){
-    throw new AppError(400, ErrorMessage.INVALID_PARAM, ErrorCode.INVALID_PARAM, null);
-  }
+    res.status(200).end(JSON.stringify(response.data));
+  }));
 
-  const response: HttpResponse = await authService.signup(reqObj);
-  if(!isSuccessHttpCode(response.status)) {
-    throw new AppError(response.status, response.message, ErrorCode.REGISTER_ERROR, JSON.stringify(response.data));
-  }
+  registerRouter = router.post('/register', asyncHandler(async (req, res, next) => {
+    const authService = new AuthService();
+    // TODO - validate here
+    const reqObj = req.body as UserSignupRequest;
+    if( isEmpty(reqObj.password) || isEmpty(reqObj.username) ){
+      throw new AppError(400, ErrorMessage.INVALID_PARAM, ErrorCode.INVALID_PARAM, null);
+    }
 
-  res.status(200)
-     .end(JSON.stringify(response.data));
-}));
+    const response: HttpResponse = await authService.signup(reqObj);
+    if(!isSuccessHttpCode(response.status)) {
+      throw new AppError(response.status, response.message, ErrorCode.REGISTER_ERROR, JSON.stringify(response.data));
+    }
+
+    res.status(200).end(JSON.stringify(response.data));
+  }));
+}

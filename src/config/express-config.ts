@@ -1,7 +1,7 @@
 import express, {Application} from 'express';
 import {indexRouter} from '../router/index.router';
-import {usersRouter} from '../router/users.router';
-import {authRouter} from '../router/auth.router';
+import {UserRouter} from '../router/users.router';
+import {AuthRouter} from '../router/auth.router';
 import {rotatingAccessLogStream} from './logger-config';
 import {AppConstant} from './constants';
 import {BaseIntegratorService} from "../provider/base-integrator.service";
@@ -20,6 +20,10 @@ export class ExpressConfig {
     private _app: express.Application;
     @Inject
     private authService: AuthService;
+    @Inject
+    private userRouter: UserRouter;
+    @Inject
+    private authRouter: AuthRouter;
 
     constructor() {
         this.initApp();
@@ -52,8 +56,8 @@ export class ExpressConfig {
 
     private configureRoutes() {
       this._app.use('/', indexRouter);
-      this._app.use('/users', this.validateToken, usersRouter);
-      this._app.use('/auth', authRouter);
+      this._app.use('/users', this.validateToken, this.userRouter.defaultRouter);
+      this._app.use('/auth', this.authRouter.defaultRouter);
       // this._app.all('*', this.validateToken);
     }
 
