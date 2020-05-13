@@ -4,13 +4,22 @@ import {usersRouter} from '../router/users.router';
 import {authRouter} from '../router/auth.router';
 import {rotatingAccessLogStream} from './logger-config';
 import {AppConstant} from './constants';
-
+import {BaseIntegratorService} from "../provider/base-integrator.service";
+const jwtDecode = require('jwt-decode');
 import axios from "axios";
+import { Inject } from 'typescript-ioc';
 const morgan =  require('morgan');
+import {isSuccessHttpCode} from "../../../pana-tutor-lib/util/common-helper";
+import {ErrorCode, ErrorMessage} from "../../../pana-tutor-lib/enum/constants";
+import {AppError} from '../common/app-error';
+import {AuthService} from '../service/auth.service';
+import { HttpResponse } from '../../../pana-tutor-lib/model/api-response.interface';
 
 export class ExpressConfig {
 
     private _app: express.Application;
+    @Inject
+    private authService: AuthService;
 
     constructor() {
         this.initApp();
@@ -21,7 +30,7 @@ export class ExpressConfig {
       this._app.use(express.json());
       this._app.use(express.urlencoded({ extended: false }));
       this.configureLogger();
-      this.configureResponse();
+      this.configureResponseHeaders();
       this.configureAxios();
       this.configureRoutes();
       this.configureErrorhandler();
@@ -31,7 +40,7 @@ export class ExpressConfig {
       this._app.use(morgan('combined', { stream: rotatingAccessLogStream }));
     }
 
-    private configureResponse() {
+    private configureResponseHeaders() {
       this._app.use((req, res, next) => {
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
@@ -43,8 +52,25 @@ export class ExpressConfig {
 
     private configureRoutes() {
       this._app.use('/', indexRouter);
-      this._app.use('/users', usersRouter);
+      this._app.use('/users', this.validateToken, usersRouter);
       this._app.use('/auth', authRouter);
+      // this._app.all('*', this.validateToken);
+    }
+
+    validateToken = async (req, res, next) => {
+      // if ( req.path == '/') return next();
+      const token = req.headers.authorization ? req.headers.authorization.split(" ")[1] : '';
+      // const decoded = jwtDecode(token);
+      console.log('#token validation:', token);
+      const tokenResp = await this.authService.validateToken(token);
+      if(!isSuccessHttpCode(tokenResp.status)) {
+        res.status(401)
+           .json({
+             code: ErrorCode.INVALID_AUTH,
+             message: tokenResp.message
+           });
+      }
+      next();
     }
 
     private configureErrorhandler() {

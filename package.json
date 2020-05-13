@@ -21,6 +21,7 @@
     "express-async-handler": "^1.1.4",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
+    "jwt-decode": "^2.2.0",
     "lodash": "^4.17.15",
     "morgan": "~1.9.1",
     "node-cache": "^5.1.0",

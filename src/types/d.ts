@@ -4,4 +4,6 @@ declare namespace NodeJS {
     ADMIN_USER: string,
     ADMIN_PASS: string,
   }
+  interface Global {
+  }
 }
