@@ -34,7 +34,7 @@ export class AuthRouter {
 
   registerRouter = router.post('/register', asyncHandler(async (req, res, next) => {
     const authService = new AuthService();
-    // TODO - validate here
+    // TODO - add request payload validation
     const reqObj = req.body as UserSignupRequest;
     if( isEmpty(reqObj.password) || isEmpty(reqObj.username) ){
       throw new AppError(400, ErrorMessage.INVALID_PARAM, ErrorCode.INVALID_PARAM, null);

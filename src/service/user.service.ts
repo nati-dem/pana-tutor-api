@@ -13,4 +13,9 @@ export class UserService {
         return await this.apiExecuter.doGet({context:'edit'}, profileUrl, true);
     }
 
+    updateUserProfile = async (id: number, reqObj) => {
+        const profileUrl = `${AppConstant.USER_URL}/${id}`
+        return await this.apiExecuter.doPost(reqObj, profileUrl, true);
+    }
+
 }

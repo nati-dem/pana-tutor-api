@@ -6,10 +6,11 @@ import {rotatingAccessLogStream} from './logger-config';
 import {AppConstant} from './constants';
 import axios from "axios";
 import { Inject } from 'typescript-ioc';
-const morgan =  require('morgan');
 import {isSuccessHttpCode} from "../../../pana-tutor-lib/util/common-helper";
 import {ErrorCode, ErrorMessage} from "../../../pana-tutor-lib/enum/constants";
 import {AuthService} from '../service/auth.service';
+import {isEmpty} from 'lodash';
+const morgan =  require('morgan');
 
 export class ExpressConfig {
 
@@ -66,9 +67,8 @@ export class ExpressConfig {
     validateToken = async (req, res, next) => {
       // if ( req.path == '/') return next();
       const token = req.headers.authorization ? req.headers.authorization.split(" ")[1] : '';
-      // const decoded = jwtDecode(token);
       console.log('#token validation:', token);
-      if(token) {
+      if(!isEmpty(token)) {
         const tokenResp = await this.authService.validateToken(token);
         if(!isSuccessHttpCode(tokenResp.status)) {
           res.status(401)
