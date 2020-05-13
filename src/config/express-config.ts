@@ -1,19 +1,15 @@
-import express, {Application} from 'express';
+import express from 'express';
 import {indexRouter} from '../router/index.router';
 import {UserRouter} from '../router/users.router';
 import {AuthRouter} from '../router/auth.router';
 import {rotatingAccessLogStream} from './logger-config';
 import {AppConstant} from './constants';
-import {BaseIntegratorService} from "../provider/base-integrator.service";
-const jwtDecode = require('jwt-decode');
 import axios from "axios";
 import { Inject } from 'typescript-ioc';
 const morgan =  require('morgan');
 import {isSuccessHttpCode} from "../../../pana-tutor-lib/util/common-helper";
 import {ErrorCode, ErrorMessage} from "../../../pana-tutor-lib/enum/constants";
-import {AppError} from '../common/app-error';
 import {AuthService} from '../service/auth.service';
-import { HttpResponse } from '../../../pana-tutor-lib/model/api-response.interface';
 
 export class ExpressConfig {
 
@@ -54,10 +50,16 @@ export class ExpressConfig {
       });
     }
 
+    private configureAxios(){
+      axios.defaults.baseURL = AppConstant.BASE_WP_URL;
+      // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
+      axios.defaults.headers.post['Content-Type'] = 'application/json';
+    }
+
     private configureRoutes() {
       this._app.use('/', indexRouter);
-      this._app.use('/users', this.validateToken, this.userRouter.defaultRouter);
-      this._app.use('/auth', this.authRouter.defaultRouter);
+      this._app.use('/users', this.validateToken, this.userRouter.baseRouter);
+      this._app.use('/auth', this.authRouter.baseRouter);
       // this._app.all('*', this.validateToken);
     }
 
@@ -66,15 +68,23 @@ export class ExpressConfig {
       const token = req.headers.authorization ? req.headers.authorization.split(" ")[1] : '';
       // const decoded = jwtDecode(token);
       console.log('#token validation:', token);
-      const tokenResp = await this.authService.validateToken(token);
-      if(!isSuccessHttpCode(tokenResp.status)) {
+      if(token) {
+        const tokenResp = await this.authService.validateToken(token);
+        if(!isSuccessHttpCode(tokenResp.status)) {
+          res.status(401)
+             .json({
+               code: ErrorCode.INVALID_AUTH,
+               message: tokenResp.message
+             });
+        }
+        next();
+      } else {
         res.status(401)
-           .json({
-             code: ErrorCode.INVALID_AUTH,
-             message: tokenResp.message
-           });
+        .json({
+          code: ErrorCode.INVALID_AUTH,
+          message: ErrorMessage.UNAUTHORIZED
+        });
       }
-      next();
     }
 
     private configureErrorhandler() {
@@ -93,12 +103,6 @@ export class ExpressConfig {
             detail: err.detail ? err.detail : ''
           });
       });
-    }
-
-    private configureAxios(){
-      axios.defaults.baseURL = AppConstant.BASE_API_URL;
-      // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
-      axios.defaults.headers.post['Content-Type'] = 'application/json';
     }
 
     get app(){

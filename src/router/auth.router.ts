@@ -11,7 +11,7 @@ const router = express.Router();
 
 export class AuthRouter {
 
-  defaultRouter = router.get('/', (req, res, next) => {
+  baseRouter = router.get('/', (req, res, next) => {
     res.status(200);
     res.end(JSON.stringify({ a: 1 }));
   });

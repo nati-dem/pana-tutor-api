@@ -10,7 +10,7 @@ const router = express.Router();
 
 export class UserRouter {
 
-  defaultRouter = router.get('/', (req, res, next) => {
+  baseRouter = router.get('/', (req, res, next) => {
       res.status(200).end(JSON.stringify({ a: 1 }));
   });
 
