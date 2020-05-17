@@ -1,6 +1,8 @@
 import express from 'express';
 import {indexRouter} from '../router/index.router';
 import {UserRouter} from '../router/users.router';
+import {CategoriesRouter} from '../router/categories.router';
+import {CoursesRouter} from '../router/courses.router';
 import {AuthRouter} from '../router/auth.router';
 import {rotatingAccessLogStream} from './logger-config';
 import {AppConstant} from './constants';
@@ -21,6 +23,10 @@ export class ExpressConfig {
     private userRouter: UserRouter;
     @Inject
     private authRouter: AuthRouter;
+    @Inject
+    private coursesRouter: CoursesRouter;
+    @Inject
+    private categoriesRouter: CategoriesRouter;
 
     constructor() {
         this.initApp();
@@ -60,6 +66,8 @@ export class ExpressConfig {
     private configureRoutes() {
       this._app.use(`${AppConstant.SERVER_SUB_DIR}/`, indexRouter);
       this._app.use(`${AppConstant.SERVER_SUB_DIR}/users`, this.validateToken, this.userRouter.baseRouter);
+      this._app.use(`${AppConstant.SERVER_SUB_DIR}/categories`, this.categoriesRouter.getCategories);
+      this._app.use(`${AppConstant.SERVER_SUB_DIR}/courses`, this.validateToken, this.coursesRouter.baseRouter);
       this._app.use(`${AppConstant.SERVER_SUB_DIR}/auth`, this.authRouter.baseRouter);
       // this._app.all('*', this.validateToken);
     }
