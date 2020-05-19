@@ -1,7 +1,8 @@
 import express from 'express';
-import {indexRouter} from '../router/index.router';
+import {IndexRouter} from '../router/index.router';
 import {UserRouter} from '../router/users.router';
 import {CategoriesRouter} from '../router/categories.router';
+
 import {CoursesRouter} from '../router/courses.router';
 import {AuthRouter} from '../router/auth.router';
 import {rotatingAccessLogStream} from './logger-config';
@@ -13,6 +14,8 @@ import {ErrorCode, ErrorMessage} from "../../../pana-tutor-lib/enum/constants";
 import {AuthService} from '../service/auth.service';
 import {isEmpty} from 'lodash';
 const morgan =  require('morgan');
+const compression = require('compression');
+const helmet = require('helmet');
 
 export class ExpressConfig {
 
@@ -27,6 +30,8 @@ export class ExpressConfig {
     private coursesRouter: CoursesRouter;
     @Inject
     private categoriesRouter: CategoriesRouter;
+    @Inject
+    private indexRouter: IndexRouter;
 
     constructor() {
         this.initApp();
@@ -36,6 +41,8 @@ export class ExpressConfig {
       this._app = express();
       this._app.use(express.json());
       this._app.use(express.urlencoded({ extended: false }));
+      this._app.use(compression()); // Compress all routes
+      this._app.use(helmet());
       this.configureLogger();
       this.configureResponseHeaders();
       this.configureAxios();
@@ -63,8 +70,8 @@ export class ExpressConfig {
       axios.defaults.headers.post['Content-Type'] = 'application/json';
     }
 
-    private configureRoutes() {
-      this._app.use(`${AppConstant.SERVER_SUB_DIR}/`, indexRouter);
+    private configureRoutes() { // genericRouter
+      this._app.use(`${AppConstant.SERVER_SUB_DIR}/`, this.indexRouter.baseRouter);
       this._app.use(`${AppConstant.SERVER_SUB_DIR}/users`, this.validateToken, this.userRouter.baseRouter);
       this._app.use(`${AppConstant.SERVER_SUB_DIR}/categories`, this.categoriesRouter.getCategories);
       this._app.use(`${AppConstant.SERVER_SUB_DIR}/courses`, this.validateToken, this.coursesRouter.baseRouter);

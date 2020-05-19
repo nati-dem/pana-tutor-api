@@ -2,11 +2,9 @@ import {IntegratorService} from "../provider/integrator.service";
 import {Inject} from "typescript-ioc";
 import {UserLoginRequest, UserSignupRequest} from "../../../pana-tutor-lib/model/user/user-auth.interface";
 import {AppConstant} from '../config/constants';
+import {BaseService} from './base.service';
 
-export class CourseService {
-
-    @Inject
-    private apiExecuter: IntegratorService;
+export class CourseService extends BaseService {
 
     getAllCategories = async () => {
         return await this.apiExecuter.doGet({context:'edit'}, AppConstant.COURSE_CATEGORIES_URL, true);
