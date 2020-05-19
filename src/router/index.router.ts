@@ -5,7 +5,7 @@ const asyncHandler = require('express-async-handler');
 import {BaseService} from "../service/base.service";
 import {isSuccessHttpCode} from "../../../pana-tutor-lib/util/common-helper";
 import {ErrorCode} from "../../../pana-tutor-lib/enum/constants";
-import {MediaModel} from "../../../pana-tutor-lib/model/cpt-model.interface";
+import {MediaModel} from "../../../pana-tutor-lib/model/media-model.interface";
 import { Inject } from 'typescript-ioc';
 
 const router = express.Router();
