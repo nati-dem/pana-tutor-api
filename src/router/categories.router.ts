@@ -1,12 +1,11 @@
 import express from 'express';
 import _ from 'lodash';
 import {AppError} from '../common/app-error';
-const asyncHandler = require('express-async-handler');
 import {CourseService} from "../service/course.service";
 import {isSuccessHttpCode} from "../../../pana-tutor-lib/util/common-helper";
 import {ErrorCode, ErrorMessage} from "../../../pana-tutor-lib/enum/constants";
 import {CourseCategory, Course} from "../../../pana-tutor-lib/model/course/";
-
+const asyncHandler = require('express-async-handler');
 import { Inject } from 'typescript-ioc';
 const router = express.Router();
 

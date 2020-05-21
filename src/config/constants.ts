@@ -8,7 +8,7 @@ export enum AppConstant {
     SERVER_SUB_DIR = '/dev/api',
     COURSE_CATEGORIES_URL = '/wp-json/wp/v2/course_categories',
     COURSES_URL = '/wp-json/wp/v2/courses',
-    COURSE_CHAPTERs_URL = '/wp-json/wp/v2/course_chapters',
+    COURSE_CHAPTERS_URL = '/wp-json/wp/v2/course_chapters',
     COURSE_LESSONS_URL = '/wp-json/wp/v2/course_lessons',
     QUIZZES_URL = '/wp-json/wp/v2/quiz',
     QUIZ_QUESTIONS_URL = '/wp-json/wp/v2/question_box',

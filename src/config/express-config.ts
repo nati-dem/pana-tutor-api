@@ -2,7 +2,6 @@ import express from 'express';
 import {IndexRouter} from '../router/index.router';
 import {UserRouter} from '../router/users.router';
 import {CategoriesRouter} from '../router/categories.router';
-
 import {CoursesRouter} from '../router/courses.router';
 import {AuthRouter} from '../router/auth.router';
 import {rotatingAccessLogStream} from './logger-config';
