@@ -1,0 +1,81 @@
+
+DROP DATABASE IF EXISTS pana_tutor;
+CREATE DATABASE pana_tutor;
+
+CREATE TABLE pana_tutor.course_enrollment (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    course_id INT UNSIGNED NOT NULL,
+    user_id INT UNSIGNED NOT NULL,
+    trial_exp_date TIMESTAMP NULL,
+    complete_date TIMESTAMP NULL,
+    status ENUM('active', 'disabled') NOT NULL,
+    enroll_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE pana_tutor.course_progress (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    enrollment_id INT UNSIGNED,
+    section_id INT UNSIGNED,
+    lesson_id INT UNSIGNED,
+    modify_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (enrollment_id) REFERENCES pana_tutor.course_enrollment(id) ON DELETE CASCADE
+);
+
+CREATE TABLE pana_tutor.enroll_payment (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    enrollment_id INT UNSIGNED,
+    amount VARCHAR(10) NOT NULL,
+    method VARCHAR(30) NOT NULL,
+    pay_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (enrollment_id) REFERENCES pana_tutor.course_enrollment(id) ON DELETE CASCADE
+);
+
+CREATE TABLE pana_tutor.attachment (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNSIGNED NOT NULL,
+    file_url VARCHAR(255) NOT NULL,
+    file_type VARCHAR(10),
+    file_size VARCHAR(10),
+    upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE pana_tutor.course_announcement (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    course_id INT UNSIGNED NOT NULL,
+    user_id INT UNSIGNED NOT NULL,
+    content TEXT NOT NULL,
+    attachment_id INT UNSIGNED NULL,
+    post_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (attachment_id) REFERENCES pana_tutor.attachment(id)
+);
+
+CREATE TABLE pana_tutor.quiz_init (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    quiz_id INT UNSIGNED NOT NULL,
+    student_id INT UNSIGNED NOT NULL,
+    enrollment_id INT UNSIGNED,
+    date_start TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    timer SMALLINT,
+    FOREIGN KEY (enrollment_id) REFERENCES pana_tutor.course_enrollment(id)
+);
+
+CREATE TABLE pana_tutor.quiz_ans_entry (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    quiz_id INT UNSIGNED NOT NULL,
+    student_id INT UNSIGNED NOT NULL,
+    que_id INT UNSIGNED NOT NULL,
+    marked_for_review ENUM('yes', 'no') NOT NULL DEFAULT 'no',
+    answer VARCHAR(255),
+    instructor_feedback VARCHAR(255) NOT NULL,
+    is_correct ENUM('yes', 'no') NOT NULL DEFAULT 'no'
+);
+
+CREATE TABLE pana_tutor.quiz_submission (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    quiz_id INT UNSIGNED NOT NULL,
+    student_id INT UNSIGNED NOT NULL,
+    total_score TINYINT UNSIGNED NOT NULL,
+    date_submit TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    instructor_feedback VARCHAR(255),
+    instructor_id INT UNSIGNED
+);
