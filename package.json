@@ -26,6 +26,7 @@
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.15",
     "morgan": "~1.9.1",
+    "mysql2": "^2.1.0",
     "node-cache": "^5.1.0",
     "rotating-file-stream": "^2.1.0",
     "typescript-ioc": "^3.2.1"

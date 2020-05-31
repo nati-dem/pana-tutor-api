@@ -11,6 +11,7 @@ import { Inject } from 'typescript-ioc';
 import {isSuccessHttpCode} from "../../../pana-tutor-lib/util/common-helper";
 import {ErrorCode, ErrorMessage} from "../../../pana-tutor-lib/enum/constants";
 import {AuthService} from '../service/auth.service';
+import {DS} from '../dao/data-source';
 import {isEmpty} from 'lodash';
 const morgan =  require('morgan');
 const compression = require('compression');
@@ -45,6 +46,7 @@ export class ExpressConfig {
       this.configureLogger();
       this.configureResponseHeaders();
       this.configureAxios();
+      DS.initConPool();
       this.configureRoutes();
       this.configureErrorhandler();
     }
@@ -90,8 +92,9 @@ export class ExpressConfig {
                code: ErrorCode.INVALID_AUTH,
                message: tokenResp.message
              });
+        }else {
+          next();
         }
-        next();
       } else {
         res.status(401)
         .json({

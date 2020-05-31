@@ -1,12 +1,12 @@
-import {IntegratorService} from "../provider/integrator.service";
+import {IntegratorService} from "./../provider/integrator.service";
 import {Inject} from "typescript-ioc";
-import {UserLoginRequest, UserSignupRequest} from "../../../pana-tutor-lib/model/user/user-auth.interface";
-import {isSuccessHttpCode} from "../../../pana-tutor-lib/util/common-helper";
-import {HttpResponse} from "../../../pana-tutor-lib/model/api-response.interface";
-import {ErrorCode, ErrorMessage} from "../../../pana-tutor-lib/enum/constants";
-import {AppError} from '../common/app-error';
-import {AppCache} from '../config/cache-config';
-import {AppConstant} from '../config/constants';
+import {UserLoginRequest, UserSignupRequest} from "./../../../pana-tutor-lib/model/user/user-auth.interface";
+import {isSuccessHttpCode} from "./../../../pana-tutor-lib/util/common-helper";
+import {HttpResponse} from "./../../../pana-tutor-lib/model/api-response.interface";
+import {ErrorCode, ErrorMessage} from "./../../../pana-tutor-lib/enum/constants";
+import {AppError} from './../common/app-error';
+import {AppCache} from './../config/cache-config';
+import {AppConstant} from './../config/constants';
 
 
 export class AuthService {

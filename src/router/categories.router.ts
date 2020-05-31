@@ -5,8 +5,8 @@ import {CourseService} from "../service/course.service";
 import {isSuccessHttpCode} from "../../../pana-tutor-lib/util/common-helper";
 import {ErrorCode, ErrorMessage} from "../../../pana-tutor-lib/enum/constants";
 import {CourseCategory, Course} from "../../../pana-tutor-lib/model/course/";
-const asyncHandler = require('express-async-handler');
 import { Inject } from 'typescript-ioc';
+const asyncHandler = require('express-async-handler');
 const router = express.Router();
 
 export class CategoriesRouter {
