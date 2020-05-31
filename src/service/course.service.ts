@@ -1,4 +1,4 @@
-import {AppConstant} from '../config/constants';
+import {AppConstant} from './../config/constants';
 import {BaseService} from './base.service';
 
 export class CourseService extends BaseService {

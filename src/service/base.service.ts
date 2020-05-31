@@ -1,6 +1,6 @@
-import {IntegratorService} from "../provider/integrator.service";
+import {IntegratorService} from "./../provider/integrator.service";
 import {Inject} from "typescript-ioc";
-import {AppConstant} from '../config/constants';
+import {AppConstant} from './../config/constants';
 import _ from 'lodash';
 
 export class BaseService {
