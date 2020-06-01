@@ -4,6 +4,7 @@ import {UserRouter} from '../router/users.router';
 import {CategoriesRouter} from '../router/categories.router';
 import {CoursesRouter} from '../router/courses.router';
 import {AuthRouter} from '../router/auth.router';
+import {QuizRouter} from '../router/quiz.router';
 import {rotatingAccessLogStream} from './logger-config';
 import {AppConstant} from './constants';
 import axios from "axios";
@@ -32,6 +33,8 @@ export class ExpressConfig {
     private categoriesRouter: CategoriesRouter;
     @Inject
     private indexRouter: IndexRouter;
+    @Inject
+    private quizRouter: QuizRouter;
 
     constructor() {
         this.initApp();
@@ -71,11 +74,12 @@ export class ExpressConfig {
       axios.defaults.headers.post['Content-Type'] = 'application/json';
     }
 
-    private configureRoutes() { // genericRouter
+    private configureRoutes() {
       this._app.use(`${AppConstant.SERVER_SUB_DIR}/`, this.indexRouter.baseRouter);
       this._app.use(`${AppConstant.SERVER_SUB_DIR}/users`, this.validateToken, this.userRouter.baseRouter);
       this._app.use(`${AppConstant.SERVER_SUB_DIR}/categories`, this.categoriesRouter.getCategories);
       this._app.use(`${AppConstant.SERVER_SUB_DIR}/courses`, this.validateToken, this.coursesRouter.baseRouter);
+      this._app.use(`${AppConstant.SERVER_SUB_DIR}/quiz`, this.validateToken, this.quizRouter.baseRouter);
       this._app.use(`${AppConstant.SERVER_SUB_DIR}/auth`, this.authRouter.baseRouter);
       // this._app.all('*', this.validateToken);
     }
@@ -92,7 +96,7 @@ export class ExpressConfig {
                code: ErrorCode.INVALID_AUTH,
                message: tokenResp.message
              });
-        }else {
+        } else {
           next();
         }
       } else {

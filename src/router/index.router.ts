@@ -40,7 +40,7 @@ export class IndexRouter {
       throw new AppError(400, ErrorMessage.INVALID_PARAM, ErrorCode.INVALID_PARAM, null);
     }
     // TODO - check if both User and Course exist and are active
-    // add trail and payment logics if required
+    // add trail and payment logics as applicable
     const resp = await this.enrollService.join(reqObj);
     res.status(200).end(JSON.stringify(resp));
   }));
