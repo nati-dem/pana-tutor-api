@@ -28,15 +28,23 @@ export class CoursesRouter {
     res.status(200).end(JSON.stringify(mapped));
   }));
 
-  getChapterById = router.get('/:courseId/chapter/:id', asyncHandler( async (req, res, next) => {
+  getChaptersById = router.get('/:courseId/chapter/:ids', asyncHandler( async (req, res, next) => {
     const courseId = req.params.courseId;
-    console.log("## getChapterById:: " +req.params.id, " , courseId:", courseId);
-    const resp = await this.courseService.getChapterById(req.params.id);
-    if(!isSuccessHttpCode(resp.status)) {
-      throw new AppError(resp.status, resp.message, ErrorCode.CHAPTER_GET_ERROR, JSON.stringify(resp.data));
-    }
-    const mapped = this.mapCommonFields(resp) as CourseChapter;
-    res.status(200).end(JSON.stringify(mapped));
+    const chapterIds = req.params.ids.split(',');;
+    console.log("## getChaptersByIds:: " +req.params.ids, " , courseId:", courseId);
+    const repsArr:any = [];
+    const len = chapterIds.length;
+    // TODO - use promises for parallel calls
+    for(let i=0; i<len;i++){
+      const resp = await this.courseService.getChapterById(chapterIds[i]);
+      if(!isSuccessHttpCode(resp.status)) {
+        throw new AppError(resp.status, resp.message, ErrorCode.CHAPTER_GET_ERROR, JSON.stringify(resp.data));
+      }
+      const mapped = this.mapCommonFields(resp) as CourseChapter;
+      repsArr.push(mapped);
+    };
+
+    res.status(200).end(JSON.stringify(repsArr));
   }));
 
   getLessonById = router.get('/:courseId/lesson/:id', asyncHandler( async (req, res, next) => {

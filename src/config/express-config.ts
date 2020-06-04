@@ -20,6 +20,7 @@ import { isEmpty } from "lodash";
 const morgan = require("morgan");
 const compression = require("compression");
 const helmet = require("helmet");
+const cors = require('cors');
 
 export class ExpressConfig {
   private _app: express.Application;
@@ -48,6 +49,7 @@ export class ExpressConfig {
     this._app.use(express.urlencoded({ extended: false }));
     this._app.use(compression()); // Compress all routes
     this._app.use(helmet());
+    this._app.use(cors());
     this.configureLogger();
     this.configureResponseHeaders();
     this.configureAxios();
