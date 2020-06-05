@@ -10,6 +10,8 @@ import {
 import { CourseCategory, Course } from "./../../../pana-tutor-lib/model/course";
 import { QuizSubmission } from "./../../../pana-tutor-lib/model/course/quiz-submission.interface";
 import { Inject } from "typescript-ioc";
+import { QuizInit } from "../../../pana-tutor-lib/model/course/quiz-init.interface";
+import { QuizAnsEntry } from "../../../pana-tutor-lib/model/course/quiz-ans-entry.interface";
 const asyncHandler = require("express-async-handler");
 const router = express.Router();
 
@@ -25,7 +27,21 @@ export class QuizRouter {
     "/start",
     asyncHandler(async (req, res, next) => {
       // save in quiz_init db
-      res.status(200).end(JSON.stringify({}));
+      //we should set SET FOREIGN_KEY_CHECKS=0 in the db to add and update foreignkey enrollment
+      const reqObj = req.body as QuizInit;
+      if (
+        !_.isNumber(reqObj.quiz_id) ||
+        !_.isNumber(reqObj.student_id || !_.isNumber(reqObj.enrollment_id))
+      ) {
+        throw new AppError(
+          400,
+          ErrorMessage.INVALID_PARAM,
+          ErrorCode.INVALID_PARAM,
+          null
+        );
+      }
+      const resp = await this.quizService.startQuiz(reqObj);
+      res.status(200).end(JSON.stringify(resp));
     })
   );
 
@@ -33,7 +49,20 @@ export class QuizRouter {
     "/submit-answer",
     asyncHandler(async (req, res, next) => {
       // save in quiz_ans_entry db
-      res.status(200).end(JSON.stringify({}));
+      const reqObj = req.body as QuizAnsEntry;
+      if (
+        !_.isNumber(reqObj.quiz_id) ||
+        !_.isNumber(reqObj.student_id || !_.isNumber(reqObj.que_id))
+      ) {
+        throw new AppError(
+          400,
+          ErrorMessage.INVALID_PARAM,
+          ErrorCode.INVALID_PARAM,
+          null
+        );
+      }
+      const resp = await this.quizService.submitAns(reqObj);
+      res.status(200).end(JSON.stringify(resp));
     })
   );
 
@@ -53,7 +82,7 @@ export class QuizRouter {
           null
         );
       }
-      const resp = this.quizService.submitQuiz(reqObj);
+      const resp = await this.quizService.submitQuiz(reqObj);
       res.status(200).end(JSON.stringify(resp));
     })
   );

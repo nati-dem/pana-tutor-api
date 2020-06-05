@@ -2,6 +2,7 @@
 DROP DATABASE IF EXISTS pana_tutor;
 CREATE DATABASE pana_tutor;
 
+
 CREATE TABLE pana_tutor.course_enrollment (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     course_id INT UNSIGNED NOT NULL,
