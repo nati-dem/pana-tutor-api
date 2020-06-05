@@ -11,6 +11,13 @@ export class QuizDAO extends BaseDAO {
     return this.find(caller, query, params);
   };
 
+  getQuestionbyId = async (queId) => {
+    const query = `SELECT * from question WHERE id = ?`;
+    const params = [queId];
+    const caller = "getQuestionbyId";
+    return this.find(caller, query, params);
+  };
+
   getSubmitedAnswer = async (quizId, queId, studentId) => {
     const query = `SELECT  quiz_id, student_id, que_id, marked_for_review, answer, instructor_feedback, is_correct FROM quiz_ans_entry WHERE  quiz_id = ? AND que_id = ? AND student_id = ? `;
     const params = [quizId, queId, studentId];
@@ -22,13 +29,6 @@ export class QuizDAO extends BaseDAO {
     const query = `SELECT quiz_id, student_id, enrollment_id, timer FROM quiz_init  WHERE quiz_id = ? AND student_id = ? AND enrollment_id = ? `;
     const params = [quizId, studentId, enrollmentId];
     const caller = "getQuizInt";
-    return this.find(caller, query, params);
-  };
-
-  getCorrrecAnsandAns = async (quiId, queId) => {
-    const query = `SELECT * FROM quiz_ans_entry JOIN question ON quiz_ans_entry.que.id = question.id`;
-    const params = [quiId, queId];
-    const caller = "getCorrrecAnsandAns";
     return this.find(caller, query, params);
   };
 
@@ -45,7 +45,7 @@ export class QuizDAO extends BaseDAO {
       req.quiz_id,
       req.student_id,
       req.que_id,
-      req.marked_for_review,
+      req.marked_for_revie
       req.answer,
       req.instructor_feedback,
       req.is_correct,

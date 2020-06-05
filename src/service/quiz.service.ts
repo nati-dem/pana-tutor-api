@@ -32,7 +32,7 @@ export class QuizService {
       req.student_id
     );
     let resp = answerfound;
-    let i = 0;
+
     if (answerfound.length === 0) {
       resp = this.quizDAO.submitAnswer(req);
       // } else {
@@ -48,13 +48,13 @@ export class QuizService {
       req.student_id
     );
     let resp = quizfound;
-    let i = 0;
+
     if (quizfound.length === 0) {
-      req.total_score += i;
       resp = this.quizDAO.submitQuiz(req);
     } else {
       resp = ErrorCode.ALREADY_EXIST;
     }
+
     return resp;
   };
 }
