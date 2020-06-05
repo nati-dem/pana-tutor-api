@@ -5,7 +5,7 @@ import {CourseService} from "../service/course.service";
 import {isSuccessHttpCode} from "../../../pana-tutor-lib/util/common-helper";
 import {ErrorCode} from "../../../pana-tutor-lib/enum/constants";
 import { Inject } from 'typescript-ioc';
-import {CourseChapter, Course, CourseLesson, Quiz} from "../../../pana-tutor-lib/model/course/";
+import {CourseChapter, Course, CourseLesson, Quiz, Question} from "../../../pana-tutor-lib/model/course/";
 const asyncHandler = require('express-async-handler');
 const router = express.Router();
 
@@ -66,6 +66,18 @@ export class CoursesRouter {
       throw new AppError(resp.status, resp.message, ErrorCode.QUIZ_GET_ERROR, JSON.stringify(resp.data));
     }
     const mapped = this.mapCommonFields(resp) as Quiz;
+    res.status(200).end(JSON.stringify(mapped));
+  }));
+
+  // ?courseId=&quizId=
+  getQuestionById = router.get('/que/:queId', asyncHandler( async (req, res, next) => {
+    const courseId = req.query.courseId;
+    console.log("## getQuestionById:: " +req.params.queId, " , courseId:", courseId);
+    const resp = await this.courseService.getQuestionById(req.params.queId);
+    if(!isSuccessHttpCode(resp.status)) {
+      throw new AppError(resp.status, resp.message, ErrorCode.QUE_GET_ERROR, JSON.stringify(resp.data));
+    }
+    const mapped = this.mapCommonFields(resp) as Question;
     res.status(200).end(JSON.stringify(mapped));
   }));
 

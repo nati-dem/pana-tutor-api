@@ -33,4 +33,9 @@ export class CourseService extends BaseService {
         return await this.apiExecuter.doGet({context:'edit'}, url, true);
     }
 
+    getQuestionById = async (id: number) => {
+        const url = `${AppConstant.QUIZ_QUESTIONS_URL}/${id}`
+        return await this.apiExecuter.doGet({context:'edit'}, url, true);
+    }
+
 }
