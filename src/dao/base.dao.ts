@@ -1,5 +1,4 @@
 import { DS } from "./data-source";
-import { query } from "express";
 
 export class BaseDAO {
   find = async (caller, query, paramArr) => {

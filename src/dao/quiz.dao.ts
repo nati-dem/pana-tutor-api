@@ -40,12 +40,13 @@ export class QuizDAO extends BaseDAO {
   };
 
   submitAnswer = async (req: QuizAnsEntry) => {
-    const query = `INSERT INTO quiz_ans_entry( quiz_id, student_id, que_id, marked_for_review, answer, instructor_feedback, is_correct) VALUES (?,?,?,?,?,?,?)`;
+    const query = `INSERT INTO quiz_ans_entry( quiz_id, student_id, que_id, marked_for_review, answer, instructor_feedback, is_correct)
+      VALUES (?,?,?,?,?,?,?)`;
     const params = [
       req.quiz_id,
       req.student_id,
       req.que_id,
-      req.marked_for_revie
+      req.marked_for_review,
       req.answer,
       req.instructor_feedback,
       req.is_correct,
@@ -55,7 +56,8 @@ export class QuizDAO extends BaseDAO {
   };
 
   submitQuiz = async (req: QuizSubmission) => {
-    const query = `INSERT INTO quiz_submission(quiz_id, student_id, total_score, instructor_feedback, instructor_id) VALUES (?,?,?,?,?)`;
+    const query = `INSERT INTO quiz_submission(quiz_id, student_id, total_score, instructor_feedback, instructor_id)
+      VALUES (?,?,?,?,?)`;
     const params = [
       req.quiz_id,
       req.student_id,
