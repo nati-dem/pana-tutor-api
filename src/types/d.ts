@@ -9,7 +9,8 @@ declare namespace NodeJS {
     DB_PASS:string,
     DB_SOCKET:string,
     DB_NAME:string,
-    DB_DEBUG:string
+    DB_DEBUG:string,
+    DB_PREFIX:string
   }
   // interface Global {
   // }
