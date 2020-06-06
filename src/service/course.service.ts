@@ -33,4 +33,16 @@ export class CourseService extends BaseService {
         return await this.apiExecuter.doGet({context:'edit'}, url, true);
     }
 
+    getQuestionById = async (id: number) => {
+        const url = `${AppConstant.QUIZ_QUESTIONS_URL}/${id}`
+        return await this.apiExecuter.doGet({context:'edit'}, url, true);
+    }
+
+    findQuestionsByQuiz = async (id: number, quizIds) => {
+        // https://panalearn.com/tutor-v1/wp-json/wp/v2/question_box?filter[meta_key]=quiz_ids&filter[meta_value]=48&filter[meta_compare]=LIKE
+        const filter = `filter[meta_key]=quiz_ids&filter[meta_value]=${quizIds}&filter[meta_compare]=LIKE`;
+        const url = `${AppConstant.QUIZ_QUESTIONS_URL}?${filter}`
+        return await this.apiExecuter.doGet({context:'edit'}, url, true);
+    }
+
 }
