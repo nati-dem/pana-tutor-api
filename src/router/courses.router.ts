@@ -118,29 +118,35 @@ export class CoursesRouter {
     })
   );
 
-  // ?courseId=&quizId=
-  getQuestionById = router.get(
+  // ?courseId=XX&quizId=XX
+  findQuestionsByQuiz = router.get(
     "/que/:queId",
     asyncHandler(async (req, res, next) => {
       const courseId = req.query.courseId;
+      const quizId = req.query.quizId;
       console.log(
-        "## getQuestionById:: " + req.params.queId,
-        " , courseId:",
-        courseId
-      );
-      const resp = await this.courseService.getQuestionById(req.params.queId);
+        "## getQuestionByIds:: " + req.params.queId,
+        " , courseId:", courseId);
+      const queIds = req.params.queId.split(',');
+      const resp = await this.courseService.findQuestionsByQuiz(queIds, quizId);
       if (!isSuccessHttpCode(resp.status)) {
         throw new AppError(
           resp.status,
           resp.message,
-          ErrorCode.QUE_GET_ERROR,
+          ErrorCode.QUIZ_QUE_FIND_ERROR,
           JSON.stringify(resp.data)
         );
       }
-      const mapped = this.mapCommonFields(resp) as Question;
+      const mapped = this.mapQuestionFields(resp) as Question[];
       res.status(200).end(JSON.stringify(mapped));
     })
   );
+
+  mapQuestionFields(resp){
+    return _.map(resp.data, _.partialRight(_.pick, ['id', 'date', 'type', 'title', 'content',
+     'status', 'featured_media', 'tags', 'acf.choice_1', 'acf.choice_2', 'acf.choice_3', 'acf.choice_4',
+     'acf.que_complexity', 'acf.que_point', 'acf.quiz_ids']));
+  }
 
   mapCommonFields(resp) {
     return _.pick(resp.data, [

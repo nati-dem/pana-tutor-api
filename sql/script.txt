@@ -1,9 +1,9 @@
 
-DROP DATABASE IF EXISTS pana_tutor;
-CREATE DATABASE pana_tutor;
+DROP DATABASE IF EXISTS panalearncom_tutor;
+CREATE DATABASE panalearncom_tutor;
 
 
-CREATE TABLE pana_tutor.course_enrollment (
+CREATE TABLE panalearncom_tutor.course_enrollment (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     course_id INT UNSIGNED NOT NULL,
     user_id INT UNSIGNED NOT NULL,
@@ -13,25 +13,25 @@ CREATE TABLE pana_tutor.course_enrollment (
     enroll_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE pana_tutor.course_progress (
+CREATE TABLE panalearncom_tutor.course_progress (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     enrollment_id INT UNSIGNED,
     section_id INT UNSIGNED,
     lesson_id INT UNSIGNED,
     modify_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (enrollment_id) REFERENCES pana_tutor.course_enrollment(id) ON DELETE CASCADE
+    FOREIGN KEY (enrollment_id) REFERENCES panalearncom_tutor.course_enrollment(id) ON DELETE CASCADE
 );
 
-CREATE TABLE pana_tutor.enroll_payment (
+CREATE TABLE panalearncom_tutor.enroll_payment (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     enrollment_id INT UNSIGNED,
     amount VARCHAR(10) NOT NULL,
     method VARCHAR(30) NOT NULL,
     pay_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (enrollment_id) REFERENCES pana_tutor.course_enrollment(id) ON DELETE CASCADE
+    FOREIGN KEY (enrollment_id) REFERENCES panalearncom_tutor.course_enrollment(id) ON DELETE CASCADE
 );
 
-CREATE TABLE pana_tutor.attachment (
+CREATE TABLE panalearncom_tutor.attachment (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     user_id INT UNSIGNED NOT NULL,
     file_url VARCHAR(255) NOT NULL,
@@ -40,27 +40,27 @@ CREATE TABLE pana_tutor.attachment (
     upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE pana_tutor.course_announcement (
+CREATE TABLE panalearncom_tutor.course_announcement (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     course_id INT UNSIGNED NOT NULL,
     user_id INT UNSIGNED NOT NULL,
     content TEXT NOT NULL,
     attachment_id INT UNSIGNED NULL,
     post_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (attachment_id) REFERENCES pana_tutor.attachment(id)
+    FOREIGN KEY (attachment_id) REFERENCES panalearncom_tutor.attachment(id)
 );
 
-CREATE TABLE pana_tutor.quiz_init (
+CREATE TABLE panalearncom_tutor.quiz_init (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     quiz_id INT UNSIGNED NOT NULL,
     student_id INT UNSIGNED NOT NULL,
     enrollment_id INT UNSIGNED,
     date_start TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     timer SMALLINT,
-    FOREIGN KEY (enrollment_id) REFERENCES pana_tutor.course_enrollment(id)
+    FOREIGN KEY (enrollment_id) REFERENCES panalearncom_tutor.course_enrollment(id)
 );
 
-CREATE TABLE pana_tutor.quiz_ans_entry (
+CREATE TABLE panalearncom_tutor.quiz_ans_entry (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     quiz_id INT UNSIGNED NOT NULL,
     student_id INT UNSIGNED NOT NULL,
@@ -71,7 +71,7 @@ CREATE TABLE pana_tutor.quiz_ans_entry (
     is_correct ENUM('yes', 'no') NOT NULL DEFAULT 'no'
 );
 
-CREATE TABLE pana_tutor.quiz_submission (
+CREATE TABLE panalearncom_tutor.quiz_submission (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     quiz_id INT UNSIGNED NOT NULL,
     student_id INT UNSIGNED NOT NULL,
