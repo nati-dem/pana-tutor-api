@@ -7,7 +7,7 @@ import {ErrorCode, ErrorMessage} from "./../../../pana-tutor-lib/enum/constants"
 import {AppError} from './../common/app-error';
 import {AppCache} from './../config/cache-config';
 import {AppConstant} from './../config/constants';
-
+const jwtDecode = require('jwt-decode');
 
 export class AuthService {
 
@@ -25,5 +25,12 @@ export class AuthService {
     validateToken = async (token: string) : Promise<HttpResponse> => {
         return await this.apiExecuter.doPost({}, AppConstant.TOKEN_VALIDATION_URL, false, token);
     }
+
+    getUserIdFromToken(token){
+        // const token = req.headers.authorization ? req.headers.authorization.split(" ")[1] : '';
+        const decoded = jwtDecode(token);
+        console.log('user id from header token: ', decoded.data.user.id);
+        return decoded.data.user.id;
+      }
 
 }

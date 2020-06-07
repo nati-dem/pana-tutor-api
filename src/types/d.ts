@@ -12,6 +12,7 @@ declare namespace NodeJS {
     DB_DEBUG:string,
     DB_PREFIX:string
   }
-  // interface Global {
-  // }
+  interface Global {
+    userId:number
+  }
 }
