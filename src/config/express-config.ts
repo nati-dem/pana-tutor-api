@@ -110,9 +110,7 @@ export class ExpressConfig {
 
   validateToken = async (req, res, next) => {
     // if ( req.path == '/') return next();
-    const token = req.headers.authorization
-      ? req.headers.authorization.split(" ")[1]
-      : "";
+    const token = req.headers.authorization ? req.headers.authorization.split(" ")[1]: "";
     console.log("#token validation:", token);
     if (!isEmpty(token)) {
       const tokenResp = await this.authService.validateToken(token);
@@ -122,6 +120,8 @@ export class ExpressConfig {
           message: tokenResp.message,
         });
       } else {
+        const userId = await this.authService.getUserIdFromToken(token);
+        global.userId = userId;
         next();
       }
     } else {
