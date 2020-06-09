@@ -3,8 +3,9 @@ import { CourseDAO } from "./../dao/course.dao";
 import { Inject } from "typescript-ioc";
 import { CourseJoinRequest } from "./../../../pana-tutor-lib/model/course/course-join.interface";
 import { STATUS } from "./../../../pana-tutor-lib/enum/course.enum";
+import {BaseService} from './base.service';
 
-export class EnrollService {
+export class EnrollService extends BaseService {
   @Inject
   private courseDAO: CourseDAO;
 
