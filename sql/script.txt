@@ -2,7 +2,6 @@
 DROP DATABASE IF EXISTS panalearncom_tutor;
 CREATE DATABASE panalearncom_tutor;
 
-
 CREATE TABLE panalearncom_tutor.course_enrollment (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     course_id INT UNSIGNED NOT NULL,
@@ -56,27 +55,26 @@ CREATE TABLE panalearncom_tutor.quiz_init (
     student_id INT UNSIGNED NOT NULL,
     enrollment_id INT UNSIGNED,
     date_start TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    timer SMALLINT,
-    FOREIGN KEY (enrollment_id) REFERENCES panalearncom_tutor.course_enrollment(id)
+    timer SMALLINT
 );
 
 CREATE TABLE panalearncom_tutor.quiz_ans_entry (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    quiz_id INT UNSIGNED NOT NULL,
-    student_id INT UNSIGNED NOT NULL,
+    quiz_init_id INT UNSIGNED NOT NULL,
     que_id INT UNSIGNED NOT NULL,
     marked_for_review ENUM('yes', 'no') NOT NULL DEFAULT 'no',
     answer VARCHAR(255),
-    instructor_feedback VARCHAR(255) NOT NULL,
-    is_correct ENUM('yes', 'no') NOT NULL DEFAULT 'no'
+    instructor_feedback VARCHAR(255) NULL,
+    is_correct ENUM('yes', 'no') NULL DEFAULT 'no',
+    FOREIGN KEY (quiz_init_id) REFERENCES panalearncom_tutor.quiz_init(id)
 );
 
 CREATE TABLE panalearncom_tutor.quiz_submission (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    quiz_id INT UNSIGNED NOT NULL,
-    student_id INT UNSIGNED NOT NULL,
+    quiz_init_id INT UNSIGNED NOT NULL,
     total_score TINYINT UNSIGNED NOT NULL,
     date_submit TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     instructor_feedback VARCHAR(255),
-    instructor_id INT UNSIGNED
+    instructor_id INT UNSIGNED,
+    FOREIGN KEY (quiz_init_id) REFERENCES panalearncom_tutor.quiz_init(id)
 );

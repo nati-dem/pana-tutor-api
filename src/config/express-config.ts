@@ -99,6 +99,7 @@ export class ExpressConfig {
     );
     this._app.use(
       `${AppConstant.SERVER_SUB_DIR}/quiz`,
+      this.validateToken,
       this.quizRouter.baseRouter
     );
     this._app.use(
