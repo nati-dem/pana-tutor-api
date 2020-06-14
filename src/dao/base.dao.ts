@@ -1,6 +1,7 @@
 import { DS } from "./data-source";
 
 export class BaseDAO {
+
   find = async (caller, query, paramArr) => {
     let result;
     await DS.getConnection()
@@ -13,7 +14,7 @@ export class BaseDAO {
     return result;
   };
 
-  insert = async (caller, query, paramArr) => {
+  insert = async (caller, query, paramArr, addParams?:any) => {
     let resp;
     await DS.getConnection()
       .query(query, paramArr)
@@ -22,6 +23,7 @@ export class BaseDAO {
         resp = [
           {
             id: rows.insertId,
+            ...(addParams ? addParams : {})
           },
         ];
       })
@@ -29,20 +31,22 @@ export class BaseDAO {
     return resp;
   };
 
-  update = async (caller, query, paramArr) => {
+  update = async (caller, query, paramArr, id, addParams?:any) => {
     let resp;
     await DS.getConnection()
       .query(query, paramArr)
       .then(([rows, fields]) => {
-        console.log(caller + " db resp ->", rows);
+        console.log(caller + " db resp -> ", rows);
         resp = [
           {
-            id: rows.updatedId,
+            id,
+            ...(addParams ? addParams : {})
           },
         ];
       })
       .catch(console.log);
     return resp;
   };
+
   delete = async () => {};
 }

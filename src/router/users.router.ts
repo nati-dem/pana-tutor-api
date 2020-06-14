@@ -20,10 +20,26 @@ export class UserRouter {
     res.send("Hello world!");
   });
 
-  profileRouter = router.get(
-    "/profile",
+  getProfileRouter = router.get(
+    "/profile/:id",
     asyncHandler(async (req, res, next) => {
-      const userId = global.userId;
+      const userId = req.params.id;
+      console.log(
+        "getProfile API call, userId:",
+        userId,
+        "global.userId::",
+        global.userId
+      );
+
+      if (userId !== global.userId) {
+        throw new AppError(
+          400,
+          ErrorMessage.FORBIDDEN,
+          ErrorCode.FORBIDDEN_ACCESS,
+          null
+        );
+      }
+
       const resp = await this.userService.getUserById(userId);
       if (!isSuccessHttpCode(resp.status)) {
         throw new AppError(
