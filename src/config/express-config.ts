@@ -20,7 +20,7 @@ import { isEmpty } from "lodash";
 const morgan = require("morgan");
 const compression = require("compression");
 const helmet = require("helmet");
-const cors = require('cors');
+const cors = require("cors");
 
 export class ExpressConfig {
   private _app: express.Application;
@@ -110,7 +110,9 @@ export class ExpressConfig {
 
   validateToken = async (req, res, next) => {
     // if ( req.path == '/') return next();
-    const token = req.headers.authorization ? req.headers.authorization.split(" ")[1]: "";
+    const token = req.headers.authorization
+      ? req.headers.authorization.split(" ")[1]
+      : "";
     console.log("#token validation:", token);
     if (!isEmpty(token)) {
       const tokenResp = await this.authService.validateToken(token);

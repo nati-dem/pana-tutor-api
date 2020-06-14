@@ -33,7 +33,7 @@ export class QuizRouter {
     "/start",
     asyncHandler(async (req, res, next) => {
       // save in quiz_init db
-      //we should set SET FOREIGN_KEY_CHECKS=0 in the db to add enrollment
+      // we should set SET FOREIGN_KEY_CHECKS=0 in the db to add enrollment
       const reqObj = req.body as QuizInit;
       if (
         !_.isNumber(reqObj.quiz_id) ||
@@ -89,8 +89,8 @@ export class QuizRouter {
         );
       }
       const answer: any = this.quizService.submitAns(req.params.id); // QuizAnsEntry
-      const correctAns: any = this.courseService.getQuestionById(req.params.id); //Question
-      let i = 0;
+      const correctAns: any = this.courseService.getQuestionById(req.params.id); // Question
+      const i = 0;
       // for (let i = 0; i < correctAns.acf.correct_answer.length; i++) {
       if (correctAns.acf.correct_answer[i] === answer.answer) {
         reqObj.total_score += correctAns.acf.que_point;
