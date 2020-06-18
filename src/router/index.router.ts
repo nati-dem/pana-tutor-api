@@ -8,6 +8,7 @@ import {MediaModel} from "./../../../pana-tutor-lib/model/media-model.interface"
 import { Inject } from 'typescript-ioc';
 import {EnrollService} from "./../service/enroll.service";
 import {CourseJoinRequest} from "./../../../pana-tutor-lib/model/course/course-join.interface";
+import {TutorRequest} from "./../../../pana-tutor-lib/model/tutor/tutor-request.interface";
 import {EntityType} from "./../../../pana-tutor-lib/enum/constants";
 import {AppConstant} from './../config/constants';
 
@@ -41,6 +42,17 @@ export class IndexRouter {
     // TODO - check if both User and Course exist and are active
     // add trail and payment logics as applicable
     const resp = await this.enrollService.join(reqObj);
+    res.status(200).end(JSON.stringify(resp));
+  }));
+
+  requestTutor = router.post('/book-tutor', asyncHandler( async (req, res, next) => {
+    const reqObj = req.body as TutorRequest;
+    console.log("## requestTutor req:: ", reqObj);
+    if( !_.isNumber(reqObj.student_id) || _.isEmpty(reqObj.course) || _.isEmpty(reqObj.start_date)) {
+      throw new AppError(400, ErrorMessage.INVALID_PARAM, ErrorCode.INVALID_PARAM, null);
+    }
+    // TODO - validate if both User and Course exist and are active
+    const resp = await this.enrollService.requestTutor(reqObj);
     res.status(200).end(JSON.stringify(resp));
   }));
 

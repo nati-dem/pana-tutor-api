@@ -10,10 +10,7 @@ import { AppConstant } from "./constants";
 import axios from "axios";
 import { Inject } from "typescript-ioc";
 import { isSuccessHttpCode } from "../../../pana-tutor-lib/util/common-helper";
-import {
-  ErrorCode,
-  ErrorMessage,
-} from "../../../pana-tutor-lib/enum/constants";
+import { ErrorCode,ErrorMessage } from "../../../pana-tutor-lib/enum/constants";
 import { AuthService } from "../service/auth.service";
 import { DS } from "../dao/data-source";
 import { isEmpty } from "lodash";
@@ -23,6 +20,7 @@ const helmet = require("helmet");
 const cors = require('cors');
 
 export class ExpressConfig {
+
   private _app: express.Application;
   @Inject
   private authService: AuthService;
