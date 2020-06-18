@@ -42,7 +42,7 @@ export class SearchRouter {
           'status', 'featured_media', 'tags', 'acf']));
           break;
       case EntityType.users:
-          mapped = _.map(resp.data, _.partialRight(_.pick, ['id', 'username', 'name', 'first_name', 
+          mapped = _.map(resp.data, _.partialRight(_.pick, ['id', 'username', 'name', 'first_name',
           'last_name', 'email', 'roles', 'avatar_urls', 'meta']));
           break;
       }
