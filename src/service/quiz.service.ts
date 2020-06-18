@@ -5,8 +5,7 @@ import { QuizInit } from "../../../pana-tutor-lib/model/course/quiz-init.interfa
 import { QuizAnsEntry } from "../../../pana-tutor-lib/model/course/quiz-ans-entry.interface";
 import { Inject } from "typescript-ioc";
 import { YesNoChoice, QuizStatus } from "../../../pana-tutor-lib/enum/common.enum";
-import { AppError } from "./../common/app-error";
-import {ErrorCode,ErrorMessage} from "./../../../pana-tutor-lib/enum/constants";
+import {ErrorMessage} from "./../../../pana-tutor-lib/enum/constants";
 
 export class QuizService {
 
@@ -35,9 +34,6 @@ export class QuizService {
       result = await this.quizDAO.updateSubmittedAnswer(req, result[0].id);
     }
 
-    if (!result) {
-      throw new AppError(500, ErrorMessage.DB_ERROR, ErrorCode.QUIZ_ANS_ENTRY_ERROR,null);
-    }
     return result;
 
   };
@@ -62,9 +58,6 @@ export class QuizService {
       }
     }
 
-    if (!result) {
-      throw new AppError(500, ErrorMessage.DB_ERROR, ErrorCode.QUIZ_SUBMIT_ERROR,null);
-    }
     return result;
   };
 }

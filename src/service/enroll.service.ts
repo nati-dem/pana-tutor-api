@@ -7,8 +7,6 @@ import { TutorRequest } from "./../../../pana-tutor-lib/model/tutor/tutor-reques
 import { STATUS } from "./../../../pana-tutor-lib/enum/course.enum";
 import { RequestStatus } from "./../../../pana-tutor-lib/enum/tutor.enum";
 import {BaseService} from './base.service';
-import {ErrorCode,ErrorMessage} from "./../../../pana-tutor-lib/enum/constants";
-import { AppError } from "./../common/app-error";
 
 export class EnrollService extends BaseService {
 
@@ -37,9 +35,6 @@ export class EnrollService extends BaseService {
       result = this.tutorReqDAO.updateTutorRequest(req, result[0].id);
     }
 
-    if (!result) {
-      throw new AppError(500, ErrorMessage.DB_ERROR, ErrorCode.SUMBIT_TUTOR_REQUEST,null);
-    }
     return result;
   };
 

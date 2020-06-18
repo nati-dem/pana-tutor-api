@@ -39,7 +39,7 @@ export class SearchRouter {
     res.status(200).end(JSON.stringify(mapped));
   }));
 
-  mapFieldsFromArray(resp, entity){
+  private mapFieldsFromArray(resp, entity){
     let mapped;
     switch(entity) {
       case EntityType.courses:
@@ -54,7 +54,7 @@ export class SearchRouter {
     return mapped;
   }
 
-  getEntityUrl(entity){
+  private getEntityUrl(entity){
     let entityUrl = '';
     switch(entity) {
       case EntityType.courses:
