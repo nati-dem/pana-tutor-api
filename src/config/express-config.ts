@@ -1,5 +1,6 @@
 import express from "express";
 import { IndexRouter } from "../router/index.router";
+import { SearchRouter } from "../router/search.router";
 import { UserRouter } from "../router/users.router";
 import { CategoriesRouter } from "../router/categories.router";
 import { CoursesRouter } from "../router/courses.router";
@@ -36,6 +37,8 @@ export class ExpressConfig {
   private indexRouter: IndexRouter;
   @Inject
   private quizRouter: QuizRouter;
+  @Inject
+  private searchRouter: SearchRouter;
 
   constructor() {
     this.initApp();
@@ -77,10 +80,8 @@ export class ExpressConfig {
   }
 
   private configureRoutes() {
-    this._app.use(
-      `${AppConstant.SERVER_SUB_DIR}/`,
-      this.indexRouter.baseRouter
-    );
+    this._app.use(`${AppConstant.SERVER_SUB_DIR}/`,this.indexRouter.baseRouter);
+    this._app.use(`${AppConstant.SERVER_SUB_DIR}/search`,this.searchRouter.search);
     this._app.use(
       `${AppConstant.SERVER_SUB_DIR}/users`,
       this.validateToken,
