@@ -81,15 +81,13 @@ export class ExpressConfig {
 
   private configureRoutes() {
     this._app.use(`${AppConstant.SERVER_SUB_DIR}/`,this.indexRouter.baseRouter);
-    this._app.use(`${AppConstant.SERVER_SUB_DIR}/search`,this.searchRouter.search);
+    this._app.use(`${AppConstant.SERVER_SUB_DIR}/auth`,this.authRouter.baseRouter);
+    this._app.use(`${AppConstant.SERVER_SUB_DIR}/search`,this.searchRouter.index);
+    this._app.use(`${AppConstant.SERVER_SUB_DIR}/categories`,this.categoriesRouter.getCategories);
     this._app.use(
       `${AppConstant.SERVER_SUB_DIR}/users`,
       this.validateToken,
       this.userRouter.baseRouter
-    );
-    this._app.use(
-      `${AppConstant.SERVER_SUB_DIR}/categories`,
-      this.categoriesRouter.getCategories
     );
     this._app.use(
       `${AppConstant.SERVER_SUB_DIR}/courses`,
@@ -100,10 +98,6 @@ export class ExpressConfig {
       `${AppConstant.SERVER_SUB_DIR}/quiz`,
       this.validateToken,
       this.quizRouter.baseRouter
-    );
-    this._app.use(
-      `${AppConstant.SERVER_SUB_DIR}/auth`,
-      this.authRouter.baseRouter
     );
     // this._app.all('*', this.validateToken);
   }
