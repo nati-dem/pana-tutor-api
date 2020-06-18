@@ -1,23 +1,23 @@
 import express from 'express';
 import _ from 'lodash';
-import {AppError} from './../common/app-error';
+import {AppError} from '../common/app-error';
 const asyncHandler = require('express-async-handler');
-import {isSuccessHttpCode} from "./../../../pana-tutor-lib/util/common-helper";
-import {ErrorCode, ErrorMessage} from "./../../../pana-tutor-lib/enum/constants";
-import {MediaModel} from "./../../../pana-tutor-lib/model/media-model.interface";
+import {isSuccessHttpCode} from "../../../pana-tutor-lib/util/common-helper";
+import {ErrorCode, ErrorMessage} from "../../../pana-tutor-lib/enum/constants";
+import {MediaModel} from "../../../pana-tutor-lib/model/media-model.interface";
 import { Inject } from 'typescript-ioc';
-import {EnrollService} from "./../service/enroll.service";
-import {CourseJoinRequest} from "./../../../pana-tutor-lib/model/course/course-join.interface";
-import {TutorRequest} from "./../../../pana-tutor-lib/model/tutor/tutor-request.interface";
+import {EnrollService} from "../service/enroll.service";
+import {CourseJoinRequest} from "../../../pana-tutor-lib/model/course/course-join.interface";
+import {TutorRequest} from "../../../pana-tutor-lib/model/tutor/tutor-request.interface";
 
 const router = express.Router();
 
-export class IndexRouter {
+export class CommonRouter {
 
   @Inject
   private enrollService: EnrollService;
 
-  baseRouter = router.get( "/", ( req, res ) => {
+  index = router.get( "/", ( req, res ) => {
     res.send( "Hello world!" );
   } );
 

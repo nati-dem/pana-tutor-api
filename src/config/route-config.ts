@@ -1,5 +1,5 @@
 import { Inject } from "typescript-ioc";
-import { IndexRouter } from "../router/index.router";
+import { CommonRouter } from "../router/common.router";
 import { SearchRouter } from "../router/search.router";
 import { UserRouter } from "../router/users.router";
 import { CategoriesRouter } from "../router/categories.router";
@@ -26,7 +26,7 @@ export class RouteConfig extends ExpressConfig {
     @Inject
     private categoriesRouter: CategoriesRouter;
     @Inject
-    private indexRouter: IndexRouter;
+    private commonRouter: CommonRouter;
     @Inject
     private quizRouter: QuizRouter;
     @Inject
@@ -40,7 +40,7 @@ export class RouteConfig extends ExpressConfig {
     }
 
     protected configureRoutes() {
-        this._app.use(`${AppConstant.SERVER_SUB_DIR}/`,this.indexRouter.baseRouter);
+        this._app.use(`${AppConstant.SERVER_SUB_DIR}/`,this.commonRouter.index);
         this._app.use(`${AppConstant.SERVER_SUB_DIR}/auth`,this.authRouter.baseRouter);
         this._app.use(`${AppConstant.SERVER_SUB_DIR}/search`,this.searchRouter.index);
         this._app.use(`${AppConstant.SERVER_SUB_DIR}/categories`,this.categoriesRouter.getCategories);
