@@ -37,8 +37,8 @@ export class TutorGroupService extends BaseService {
     return result;
   };
 
-  getGroupMembers = async (courseId, groupStatus, tutor_group_id) => {
-    return await this.groupDAO.getGroupMembers(courseId, groupStatus, tutor_group_id);
+  getGroupMembers = async (courseId, groupStatus, tutorGroupId) => {
+    return await this.groupDAO.getGroupMembers(courseId, groupStatus, tutorGroupId);
   }
 
   findUserGroupsInCourse = async (courseId, groupStatus) => {

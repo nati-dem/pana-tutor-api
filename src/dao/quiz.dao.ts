@@ -22,12 +22,12 @@ export class QuizDAO extends BaseDAO {
     return this.find(caller, query, params);
   };
 
-  getSubmittedAnswer = async (quiz_init_id, queId, studId) => {
+  getSubmittedAnswer = async (quizInitId, queId, studId) => {
     const query = `SELECT ans.* FROM quiz_ans_entry ans
       INNER JOIN quiz_init init
       ON ans.quiz_init_id = init.id
       WHERE  ans.quiz_init_id = ? AND ans.que_id = ? AND init.student_id = ?`;
-    const params = [quiz_init_id, queId, studId];
+    const params = [quizInitId, queId, studId];
     const caller = "getSubmitedAnswer";
     return this.find(caller, query, params);
   };

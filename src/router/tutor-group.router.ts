@@ -33,13 +33,13 @@ export class TutorGroupRouter {
 
   getGroupMembers = router.get('/members', asyncHandler( async (req, res, next) => {
     const courseId = parseInt(req.query.courseId, 10);
-    const group_id = parseInt(req.query.group_id, 10);
+    const groupId = parseInt(req.query.group_id, 10);
     const groupStatus = req.query.groupStatus;
-    console.log("## getGroupMembers courseId:: ", courseId , ' & groupStatus::', groupStatus, ' & group_id::', group_id);
-    if( !_.isNumber(courseId) || !(groupStatus in GroupStatus) || !_.isNumber(group_id) ) {
+    console.log("## getGroupMembers courseId:: ", courseId , ' & groupStatus::', groupStatus, ' & group_id::', groupId);
+    if( !_.isNumber(courseId) || !(groupStatus in GroupStatus) || !_.isNumber(groupId) ) {
       throw new AppError(400, ErrorMessage.INVALID_PARAM, ErrorCode.INVALID_PARAM, null);
     }
-    const resp = await this.groupService.getGroupMembers(courseId,groupStatus,group_id);
+    const resp = await this.groupService.getGroupMembers(courseId,groupStatus,groupId);
     res.status(200).end(JSON.stringify(resp));
   }));
 
