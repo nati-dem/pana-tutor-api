@@ -14,7 +14,7 @@ export class UserRouter {
   @Inject
   private userService: UserService
 
-  baseRouter = router.get('/', (req, res, next) => {
+  index = router.get('/', (req, res, next) => {
     res.send( "Hello world!" );
   });
 

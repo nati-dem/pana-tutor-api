@@ -94,39 +94,40 @@ CREATE TABLE panalearncom_tutor.tutor_request (
     req_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-/* should there be multiple board instances in given course? */
+/* should there be multiple board instances in given course?
 CREATE TABLE panalearncom_tutor.tutor_board (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     course_id INT UNSIGNED NOT NULL
-);
+);  */
 
 CREATE TABLE panalearncom_tutor.tutor_group (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    board_id INT UNSIGNED NOT NULL,
-    status ENUM('active', 'disabled') NOT NULL DEFAULT 'active',
-    start_date TIMESTAMP NOT NULL,
-    FOREIGN KEY (board_id) REFERENCES panalearncom_tutor.tutor_board(id)
+    course_id INT UNSIGNED NOT NULL,
+    status ENUM('active', 'locked', 'disabled') NOT NULL DEFAULT 'active',
+    start_date DATETIME NOT NULL,
+    created_by INT UNSIGNED NOT NULL,
+    create_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE panalearncom_tutor.tutor_group_members (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     tutor_group_id INT UNSIGNED NOT NULL,
     user_id INT UNSIGNED NOT NULL,
-    user_role INT UNSIGNED NOT NULL,
+    user_role ENUM('admin', 'instructor', 'moderator', 'subscriber') NOT NULL DEFAULT 'subscriber',
     status ENUM('active', 'disabled') NOT NULL DEFAULT 'active',
+    join_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (tutor_group_id) REFERENCES panalearncom_tutor.tutor_group(id)
 );
 
 CREATE TABLE panalearncom_tutor.tutor_board_posts (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    board_id INT UNSIGNED NOT NULL,
+    course_id INT UNSIGNED NOT NULL,
     post_title VARCHAR(128) NOT NULL,
     post_content VARCHAR(255) NULL,
     post_type ENUM('generic','assignment', 'meeting', 'media', 'resource', 'link') NOT NULL DEFAULT 'generic',
     attachment_id INT UNSIGNED NULL,
     status ENUM('published', 'hidden') NOT NULL DEFAULT 'published',
-    FOREIGN KEY (attachment_id) REFERENCES panalearncom_tutor.attachment(id),
-    FOREIGN KEY (board_id) REFERENCES panalearncom_tutor.tutor_board(id)
+    FOREIGN KEY (attachment_id) REFERENCES panalearncom_tutor.attachment(id)
 );
 
 CREATE TABLE panalearncom_tutor.tutor_board_post_access (

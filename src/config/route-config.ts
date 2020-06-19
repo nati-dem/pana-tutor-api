@@ -6,6 +6,7 @@ import { CategoriesRouter } from "../router/categories.router";
 import { CoursesRouter } from "../router/courses.router";
 import { AuthRouter } from "../router/auth.router";
 import { QuizRouter } from "../router/quiz.router";
+import { TutorGroupRouter } from "../router/tutor-group.router";
 import { AuthService } from "../service/auth.service";
 import { AppConstant } from "./constants";
 import { isSuccessHttpCode } from "../../../pana-tutor-lib/util/common-helper";
@@ -31,6 +32,8 @@ export class RouteConfig extends ExpressConfig {
     private quizRouter: QuizRouter;
     @Inject
     private searchRouter: SearchRouter;
+    @Inject
+    private tutorGroupRouter: TutorGroupRouter;
 
     public constructor() {
         super();
@@ -44,21 +47,10 @@ export class RouteConfig extends ExpressConfig {
         this._app.use(`${AppConstant.SERVER_SUB_DIR}/auth`,this.authRouter.baseRouter);
         this._app.use(`${AppConstant.SERVER_SUB_DIR}/search`,this.searchRouter.index);
         this._app.use(`${AppConstant.SERVER_SUB_DIR}/categories`,this.categoriesRouter.getCategories);
-        this._app.use(
-          `${AppConstant.SERVER_SUB_DIR}/users`,
-          this.validateToken,
-          this.userRouter.baseRouter
-        );
-        this._app.use(
-          `${AppConstant.SERVER_SUB_DIR}/courses`,
-          this.validateToken,
-          this.coursesRouter.baseRouter
-        );
-        this._app.use(
-          `${AppConstant.SERVER_SUB_DIR}/quiz`,
-          this.validateToken,
-          this.quizRouter.baseRouter
-        );
+        this._app.use(`${AppConstant.SERVER_SUB_DIR}/users`,this.validateToken,this.userRouter.index);
+        this._app.use(`${AppConstant.SERVER_SUB_DIR}/courses`,this.validateToken,this.coursesRouter.index);
+        this._app.use(`${AppConstant.SERVER_SUB_DIR}/quiz`,this.validateToken,this.quizRouter.index);
+        this._app.use(`${AppConstant.SERVER_SUB_DIR}/tutor-groups`,this.validateToken,this.tutorGroupRouter.index);
         // this._app.all('*', this.validateToken);
       }
 

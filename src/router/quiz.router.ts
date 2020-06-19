@@ -19,7 +19,7 @@ export class QuizRouter {
   @Inject
   private courseService: CourseService;
 
-  baseRouter = router.get("/", (req, res) => {
+  index = router.get("/", (req, res) => {
     res.send("Hello world!");
   });
 
