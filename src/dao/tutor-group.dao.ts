@@ -36,7 +36,7 @@ export class TutorGroupDAO extends BaseDAO {
   };
 
   getGroupMembers = async (courseId, groupStatus, groupId) => {
-    const query = `SELECT * FROM tutor_group g
+    const query = `SELECT m.id, g.status,g.course_id,m.user_id, m.user_role, m.join_date FROM tutor_group g
       LEFT JOIN tutor_group_members m on m.tutor_group_id = g.id
       where g.course_id =? AND g.status = ? AND g.id = ? `;
     const params = [courseId, groupStatus, groupId];
@@ -52,6 +52,15 @@ export class TutorGroupDAO extends BaseDAO {
     const caller = "findUserGroups";
     return this.find(caller, query, params);
   };
+
+  getAllUserGroups = async (userId, groupStatus, userStatus) => {
+    const query = `SELECT m.* , g.start_date , g.status FROM tutor_group g
+      INNER JOIN tutor_group_members m on m.tutor_group_id = g.id
+      where m.user_id = ? AND g.status = ? AND m.status = ? `;
+    const params = [userId, groupStatus, userStatus];
+    const caller = "getAllUserGroups";
+    return this.find(caller, query, params);
+  }
 
 
 }
