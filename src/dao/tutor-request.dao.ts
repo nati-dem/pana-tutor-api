@@ -25,7 +25,7 @@ export class TutorRequestDAO extends BaseDAO {
 
     const params = [ req.tutor_ids, req.course, req.grade_level, req.start_date,
             req.duration, req.group_allowed, req.status, id ];
-    const caller = "submitTutorRequest";
+    const caller = "updateTutorRequest";
     return this.update(caller, query, params, id);
   };
 

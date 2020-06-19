@@ -62,5 +62,4 @@ export class TutorGroupDAO extends BaseDAO {
     return this.find(caller, query, params);
   }
 
-
 }
