@@ -76,4 +76,15 @@ export class QuizRouter {
     })
   );
 
+  getUserQuizEntries = router.get('/user/:quizId', asyncHandler( async (req, res, next) => {
+    const quizId = parseInt(req.params.quizId,10);
+    const userId = global.userId;
+    console.log("## getUserQuizEntries quizId:: ", quizId, " & userId:", userId );
+    if( !_.isNumber(quizId) ) {
+      throw new AppError(400, ErrorMessage.INVALID_PARAM, ErrorCode.INVALID_PARAM, null);
+    }
+    const resp = await this.quizService.findUserQuizEntries(userId, quizId);
+    res.status(200).end(JSON.stringify(resp));
+  }));
+
 }

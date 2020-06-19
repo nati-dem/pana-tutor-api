@@ -63,9 +63,9 @@ CREATE TABLE panalearncom_tutor.quiz_ans_entry (
     quiz_init_id INT UNSIGNED NOT NULL,
     que_id INT UNSIGNED NOT NULL,
     marked_for_review ENUM('1', '0') NOT NULL DEFAULT '0',
-    answer VARCHAR(255),
+    answer VARCHAR(255) NULL,
     instructor_feedback VARCHAR(255) NULL,
-    is_correct ENUM('1', '0') NULL DEFAULT '0',
+    is_correct ENUM('1', '0') NOT NULL DEFAULT '0',
     FOREIGN KEY (quiz_init_id) REFERENCES panalearncom_tutor.quiz_init(id)
 );
 
