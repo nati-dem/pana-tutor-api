@@ -5,6 +5,18 @@ import { QuizInit } from "../../../pana-tutor-lib/model/course/quiz-init.interfa
 import { YesNoChoice } from "./../../../pana-tutor-lib/enum/common.enum";
 
 export class QuizDAO extends BaseDAO {
+  findUserQuizEntries = async (userId, quizId) => {
+    const query = `SELECT init.id as initId, init.quiz_id, init.student_id, init.date_start,
+      ans.que_id, ans.answer, ans.is_correct, ans.marked_for_review, sub.total_score, sub.date_submit
+      FROM quiz_init init
+      LEFT JOIN quiz_ans_entry ans on init.id = ans.quiz_init_id
+      LEFT JOIN quiz_submission sub on init.id = sub.quiz_init_id
+      where init.student_id = ? AND init.quiz_id = ? `;
+    const params = [userId, quizId];
+    const caller = "findUserQuizEntries";
+    return this.find(caller, query, params);
+  };
+
   getSubmittedQuiz = async (req: QuizSubmission, studentId) => {
     const query = `SELECT  sub.* FROM quiz_submission sub
       INNER JOIN quiz_init init ON sub.quiz_init_id = init.id
@@ -21,12 +33,12 @@ export class QuizDAO extends BaseDAO {
     return this.find(caller, query, params);
   };
 
-  getSubmittedAnswer = async (quiz_init_id, queId, studId) => {
+  getSubmittedAnswer = async (quizInitId, queId, studId) => {
     const query = `SELECT ans.* FROM quiz_ans_entry ans
       INNER JOIN quiz_init init
       ON ans.quiz_init_id = init.id
       WHERE  ans.quiz_init_id = ? AND ans.que_id = ? AND init.student_id = ?`;
-    const params = [quiz_init_id, queId, studId];
+    const params = [quizInitId, queId, studId];
     const caller = "getSubmitedAnswer";
     return this.find(caller, query, params);
   };

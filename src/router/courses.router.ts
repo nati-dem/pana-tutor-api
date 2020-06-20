@@ -19,7 +19,7 @@ export class CoursesRouter {
   @Inject
   private courseService: CourseService;
 
-  baseRouter = router.get("/", (req, res, next) => {
+  index = router.get("/", (req, res, next) => {
     res.send("Hello world!");
   });
 

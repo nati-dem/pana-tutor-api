@@ -3,9 +3,9 @@ import { TutorRequest } from "../../../pana-tutor-lib/model/tutor/tutor-request.
 
 export class TutorRequestDAO extends BaseDAO {
 
-  getTutorRequest = async (student_id, course, status) => {
+  getTutorRequest = async (studentId, course, status) => {
     const query = `SELECT * FROM tutor_request WHERE student_id = ? AND course LIKE ? AND status = ?`;
-    const params = [student_id, `%${course}%`, status];
+    const params = [studentId, `%${course}%`, status];
     const caller = "getTutorRequest";
     return this.find(caller, query, params);
   };

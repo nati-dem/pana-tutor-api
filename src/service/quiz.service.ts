@@ -76,4 +76,32 @@ export class QuizService {
 
     return result;
   };
+
+  findUserQuizEntries = async (userId, quizId) => {
+    const result = await this.quizDAO.findUserQuizEntries(userId, quizId);
+    const map = new Map()
+    if(Array.isArray(result) && result.length > 0) {
+      result.forEach(res => {
+
+        const ans = res.que_id ? {que_id: res.que_id, answer: res.answer, is_correct: res.is_correct} : null;
+
+        if(!map.has(res.initId)) {
+
+          map.set(res.initId, {
+            initId: res.initId,
+            quiz_id: res.initId,
+            student_id: res.student_id,
+            answers: [ans],
+            ...(res.total_score? {total_score: res.total_score, date_submit: res.date_submit} : {})
+          });
+        } else {
+          map.get(res.initId)
+          .answers.push(ans);
+        }
+
+      });
+    }
+    return Array.from(map.values());
+  }
+
 }
