@@ -2,10 +2,9 @@ import { BaseDAO } from "./base.dao";
 import { QuizSubmission } from "../../../pana-tutor-lib/model/course/quiz-submission.interface";
 import { QuizAnsEntry } from "../../../pana-tutor-lib/model/course/quiz-ans-entry.interface";
 import { QuizInit } from "../../../pana-tutor-lib/model/course/quiz-init.interface";
-import {YesNoChoice} from "./../../../pana-tutor-lib/enum/common.enum";
+import { YesNoChoice } from "./../../../pana-tutor-lib/enum/common.enum";
 
 export class QuizDAO extends BaseDAO {
-
   getSubmittedQuiz = async (req: QuizSubmission, studentId) => {
     const query = `SELECT  sub.* FROM quiz_submission sub
       INNER JOIN quiz_init init ON sub.quiz_init_id = init.id
@@ -57,44 +56,45 @@ export class QuizDAO extends BaseDAO {
       req.is_correct,
     ];
     const caller = "submitAnswer";
-    return this.insert(caller, query, params, {que_id:req.que_id,
-      quiz_init_id: req.quiz_init_id, is_correct: req.is_correct});
+    return this.insert(caller, query, params, {
+      que_id: req.que_id,
+      quiz_init_id: req.quiz_init_id,
+      is_correct: req.is_correct,
+    });
   };
 
   updateSubmittedAnswer = async (req: QuizAnsEntry, id) => {
     // dont need join with quiz_init since userId was checked by getSubmittedAnswer method
     const query = `UPDATE quiz_ans_entry SET marked_for_review=?, answer=?, is_correct=? WHERE id = ?`;
-    const params = [
-      req.marked_for_review,
-      req.answer,
-      req.is_correct,
-      id
-    ];
+    const params = [req.marked_for_review, req.answer, req.is_correct, id];
     const caller = "updateSubmittedAnswer";
-    return this.update(caller, query, params, id, {que_id:req.que_id,
-      quiz_init_id: req.quiz_init_id, is_correct: req.is_correct} );
+    return this.update(caller, query, params, id, {
+      que_id: req.que_id,
+      quiz_init_id: req.quiz_init_id,
+      is_correct: req.is_correct,
+    });
   };
 
   submitQuiz = async (req: QuizSubmission) => {
     const query = `INSERT INTO quiz_submission(quiz_init_id, total_score)
       VALUES (?,?)`;
-    const params = [
-      req.quiz_init_id,
-      req.total_score
-    ];
+    const params = [req.quiz_init_id, req.total_score];
     const caller = "submitQuiz";
-    return this.insert(caller, query, params, { quiz_init_id: req.quiz_init_id, total_score: req.total_score,
-      que_id:req.que_id, is_correct: req.is_correct });
+    return this.insert(caller, query, params, {
+      quiz_init_id: req.quiz_init_id,
+      total_score: req.total_score,
+      que_id: req.que_id,
+      is_correct: req.is_correct,
+    });
   };
 
-  calcTotalScore(req: QuizSubmission, studentId){
+  calcTotalScore(req: QuizSubmission, studentId) {
     const query = `SELECT COUNT(*) as total_score
       FROM quiz_ans_entry ans
       INNER JOIN quiz_init init ON ans.quiz_init_id = init.id
-      WHERE ans.is_correct = ? AND ans.quiz_init_id = ? AND init.student_id = ? `
+      WHERE ans.is_correct = ? AND ans.quiz_init_id = ? AND init.student_id = ? `;
     const params = [YesNoChoice.yes, req.quiz_init_id, studentId];
     const caller = "getTotalScore";
     return this.find(caller, query, params);
   }
-
 }

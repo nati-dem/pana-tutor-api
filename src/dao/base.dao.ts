@@ -1,4 +1,6 @@
 import { DS } from "./data-source";
+import { AppError } from "./../common/app-error";
+import {ErrorMessage} from "./../../../pana-tutor-lib/enum/constants";
 
 export class BaseDAO {
 
@@ -10,7 +12,10 @@ export class BaseDAO {
         console.log(caller + " db resp -> ", rows);
         result = rows;
       })
-      .catch(console.log);
+      .catch(err => {
+        console.log(err)
+        throw new AppError(500, ErrorMessage.DB_FIND_ERROR, caller,null);
+      });
     return result;
   };
 
@@ -27,7 +32,10 @@ export class BaseDAO {
           },
         ];
       })
-      .catch(console.log);
+      .catch(err => {
+        console.log(err)
+        throw new AppError(500, ErrorMessage.DB_INSERT_ERROR, caller,null);
+      });
     return resp;
   };
 
@@ -44,7 +52,10 @@ export class BaseDAO {
           },
         ];
       })
-      .catch(console.log);
+      .catch(err => {
+        console.log(err)
+        throw new AppError(500, ErrorMessage.DB_UPDATE_ERROR, caller,null);
+      });
     return resp;
   };
 

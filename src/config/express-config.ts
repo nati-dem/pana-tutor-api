@@ -1,5 +1,6 @@
 import express from "express";
 import { IndexRouter } from "../router/index.router";
+import { SearchRouter } from "../router/search.router";
 import { UserRouter } from "../router/users.router";
 import { CategoriesRouter } from "../router/categories.router";
 import { CoursesRouter } from "../router/courses.router";
@@ -10,10 +11,7 @@ import { AppConstant } from "./constants";
 import axios from "axios";
 import { Inject } from "typescript-ioc";
 import { isSuccessHttpCode } from "../../../pana-tutor-lib/util/common-helper";
-import {
-  ErrorCode,
-  ErrorMessage,
-} from "../../../pana-tutor-lib/enum/constants";
+import { ErrorCode,ErrorMessage } from "../../../pana-tutor-lib/enum/constants";
 import { AuthService } from "../service/auth.service";
 import { DS } from "../dao/data-source";
 import { isEmpty } from "lodash";
@@ -23,6 +21,7 @@ const helmet = require("helmet");
 const cors = require("cors");
 
 export class ExpressConfig {
+
   private _app: express.Application;
   @Inject
   private authService: AuthService;
@@ -38,6 +37,8 @@ export class ExpressConfig {
   private indexRouter: IndexRouter;
   @Inject
   private quizRouter: QuizRouter;
+  @Inject
+  private searchRouter: SearchRouter;
 
   constructor() {
     this.initApp();
@@ -79,18 +80,14 @@ export class ExpressConfig {
   }
 
   private configureRoutes() {
-    this._app.use(
-      `${AppConstant.SERVER_SUB_DIR}/`,
-      this.indexRouter.baseRouter
-    );
+    this._app.use(`${AppConstant.SERVER_SUB_DIR}/`,this.indexRouter.baseRouter);
+    this._app.use(`${AppConstant.SERVER_SUB_DIR}/auth`,this.authRouter.baseRouter);
+    this._app.use(`${AppConstant.SERVER_SUB_DIR}/search`,this.searchRouter.index);
+    this._app.use(`${AppConstant.SERVER_SUB_DIR}/categories`,this.categoriesRouter.getCategories);
     this._app.use(
       `${AppConstant.SERVER_SUB_DIR}/users`,
       this.validateToken,
       this.userRouter.baseRouter
-    );
-    this._app.use(
-      `${AppConstant.SERVER_SUB_DIR}/categories`,
-      this.categoriesRouter.getCategories
     );
     this._app.use(
       `${AppConstant.SERVER_SUB_DIR}/courses`,
@@ -101,10 +98,6 @@ export class ExpressConfig {
       `${AppConstant.SERVER_SUB_DIR}/quiz`,
       this.validateToken,
       this.quizRouter.baseRouter
-    );
-    this._app.use(
-      `${AppConstant.SERVER_SUB_DIR}/auth`,
-      this.authRouter.baseRouter
     );
     // this._app.all('*', this.validateToken);
   }
