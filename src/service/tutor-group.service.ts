@@ -18,7 +18,7 @@ export class TutorGroupService extends BaseService {
     const result = await this.groupDAO.createGroup(req);
     if(Array.isArray(result)){
       req.owner.tutor_group_id = result[0].id;
-      req.owner.user_role = TutorGroupRole.admin;
+      // req.owner.user_role = TutorGroupRole.instructor;
       req.owner.course_id = req.course_id;
       await this.addOrUpdateGroupMember(req.owner);
     }
@@ -47,6 +47,33 @@ export class TutorGroupService extends BaseService {
 
   getAllUserGroups = async (userId, groupStatus, userStatus) => {
     return await this.groupDAO.getAllUserGroups(userId, groupStatus, userStatus);
+  }
+
+  getAllGroupsInCourse = async (courseId, groupStatus) => {
+    const result = await this.groupDAO.getAllGroupsInCourse(courseId, groupStatus);
+
+    const map = new Map()
+    if(Array.isArray(result) && result.length > 0) {
+      result.forEach(res => {
+        const user = {
+          userStatus: res.userStatus,
+          user_id: res.user_id,
+          user_role:res.user_role
+        };
+        if(!map.has(res.groupId)) {
+          map.set(res.groupId, {
+            groupId: res.groupId,
+            groupStatus: res.groupStatus,
+            start_date: res.start_date,
+            members: [user]
+          });
+        } else {
+          map.get(res.groupId)
+          .members.push(user);
+        }
+      });
+    }
+    return Array.from(map.values());
   }
 
 }
