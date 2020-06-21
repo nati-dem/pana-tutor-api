@@ -20,6 +20,17 @@ export class TutorGroupRouter {
     res.send( "Hello world!" );
   });
 
+  getAllGroupsInCourse = router.get('/course/:courseId', asyncHandler( async (req, res, next) => {
+    const groupStatus = req.query.groupStatus;
+    const courseId = parseInt(req.params.courseId, 10);
+    console.log("## getAllGroupsInCourse courseId:: ", courseId , ' &groupStatus::', groupStatus);
+    if( !(groupStatus in GroupStatus) || !courseId || !_.isNumber(courseId) ) {
+      throw new AppError(400, ErrorMessage.INVALID_PARAM, ErrorCode.INVALID_PARAM, null);
+    }
+    const resp = await this.groupService.getAllGroupsInCourse(courseId,groupStatus);
+    res.status(200).end(JSON.stringify(resp));
+  }));
+
   findAllUserGroups = router.get('/user/all', asyncHandler( async (req, res, next) => {
     const userId = global.userId;
     const groupStatus = req.query.groupStatus;
