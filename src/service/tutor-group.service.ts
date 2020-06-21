@@ -51,14 +51,16 @@ export class TutorGroupService extends BaseService {
 
   getAllGroupsInCourse = async (courseId, groupStatus) => {
     const result = await this.groupDAO.getAllGroupsInCourse(courseId, groupStatus);
-
     const map = new Map()
     if(Array.isArray(result) && result.length > 0) {
       result.forEach(res => {
         const user = {
           userStatus: res.userStatus,
           user_id: res.user_id,
-          user_role:res.user_role
+          user_role: res.user_role,
+          user_name: res.name,
+          email: res.email,
+          phone: res.phone
         };
         if(!map.has(res.groupId)) {
           map.set(res.groupId, {

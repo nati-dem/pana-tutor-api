@@ -1,6 +1,7 @@
 import express from 'express';
 import {UserLoginRequest, UserSignupRequest} from "../../../pana-tutor-lib/model/user/user-auth.interface";
 import {AuthService} from "../service/auth.service";
+import {UserService} from "../service/user.service";
 import {isEmpty} from 'lodash';
 import {AppError} from '../common/app-error';
 import {HttpResponse} from "../../../pana-tutor-lib/model/api-response.interface";
@@ -14,6 +15,8 @@ export class AuthRouter {
 
   @Inject
   private authService: AuthService;
+  @Inject
+  private userService: UserService;
 
   baseRouter = router.get('/', (req, res, next) => {
     res.send( "Hello world!" );
@@ -38,7 +41,8 @@ export class AuthRouter {
 
     // TODO - add request payload validation
     const reqObj = req.body as UserSignupRequest;
-    if( isEmpty(reqObj.password) || isEmpty(reqObj.username) ){
+    if( isEmpty(reqObj.password) || isEmpty(reqObj.username)
+      || isEmpty(reqObj.email) || isEmpty(reqObj.name) ){
       throw new AppError(400, ErrorMessage.INVALID_PARAM, ErrorCode.INVALID_PARAM, null);
     }
 
@@ -46,6 +50,8 @@ export class AuthRouter {
     if(!isSuccessHttpCode(response.status)) {
       throw new AppError(response.status, response.message, ErrorCode.REGISTER_ERROR, JSON.stringify(response.data));
     }
+    // save in local DB
+    this.userService.saveUser(response.data);
 
     res.status(200).end(JSON.stringify(response.data));
   }));

@@ -1,20 +1,22 @@
 import express from 'express';
 import _ from 'lodash';
 import {AppError} from './../common/app-error';
-const asyncHandler = require('express-async-handler');
 import {isSuccessHttpCode} from "./../../../pana-tutor-lib/util/common-helper";
 import {ErrorCode, ErrorMessage} from "./../../../pana-tutor-lib/enum/constants";
 import { Inject } from 'typescript-ioc';
 import {BaseService} from "./../service/base.service";
 import {EntityType} from "./../../../pana-tutor-lib/enum/constants";
 import {AppConstant} from './../config/constants';
-
+import {UserService} from "../service/user.service";
+const asyncHandler = require('express-async-handler');
 const router = express.Router();
 
 export class SearchRouter {
 
   @Inject
   private baseService: BaseService;
+  @Inject
+  private userService: UserService;
 
   // entity=courses&q=
   index = router.get('/', asyncHandler( async (req, res, next) => {
@@ -30,6 +32,14 @@ export class SearchRouter {
     if (!isSuccessHttpCode(resp.status)) {
       throw new AppError(resp.status,resp.message,ErrorCode.SEARCH_ERROR,JSON.stringify(resp.data));
     }
+
+    // TODO - Remove... TEMP code to save users in local DB
+    if(entity === EntityType.users && resp.data.length > 0) {
+      for(const d of resp.data){
+        this.userService.saveUser(d);
+      }
+    }
+
     const mapped = this.mapFieldsFromArray(resp, entity);
     res.status(200).end(JSON.stringify(mapped));
   }));

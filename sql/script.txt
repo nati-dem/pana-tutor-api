@@ -156,6 +156,18 @@ CREATE TABLE panalearncom_tutor.tutor_group_pay_history (
     FOREIGN KEY (tutor_group_id) REFERENCES panalearncom_tutor.tutor_group(id)
 );
 
+CREATE TABLE panalearncom_tutor.users (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNSIGNED NOT NULL UNIQUE,
+    name VARCHAR(128) NOT NULL,
+    email VARCHAR(128) NOT NULL UNIQUE,
+    phone VARCHAR(20) NULL,
+    address VARCHAR(128) NULL,
+    user_role ENUM('administrator', 'author', 'contributor', 'instructor', 'subscriber') NOT NULL DEFAULT 'subscriber',
+    status ENUM('active', 'pending', 'disabled', 'locked', 'deleted') NOT NULL DEFAULT 'active',
+    create_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 /*
 user_reward
 
