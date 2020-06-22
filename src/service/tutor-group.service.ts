@@ -45,8 +45,8 @@ export class TutorGroupService extends BaseService {
     return await this.groupDAO.findUserGroupsInCourse(courseId, groupStatus, userId);
   }
 
-  getAllUserGroups = async (userId, groupStatus, userStatus) => {
-    return await this.groupDAO.getAllUserGroups(userId, groupStatus, userStatus);
+  getAllUserGroups = async (userId, groupStatus, memberStatus) => {
+    return await this.groupDAO.getAllUserGroups(userId, groupStatus, memberStatus);
   }
 
   getAllGroupsInCourse = async (courseId, groupStatus) => {
@@ -55,7 +55,7 @@ export class TutorGroupService extends BaseService {
     if(Array.isArray(result) && result.length > 0) {
       result.forEach(res => {
         const user = {
-          userStatus: res.userStatus,
+          member_status: res.member_status,
           user_id: res.user_id,
           user_role: res.user_role,
           user_name: res.name,
