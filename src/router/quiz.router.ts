@@ -24,7 +24,7 @@ export class QuizRouter {
   });
 
   start = router.post("/start", asyncHandler(async (req, res, next) => {
-      // TODO - add quiz retry logic after submit
+      // TODO - add quiz retry logic after first submit
       const reqObj = req.body as QuizInit;
       if ( !_.isNumber(reqObj.quiz_id) || (!_.isEmpty(reqObj.enrollment_id) && !_.isNumber(reqObj.enrollment_id)) ) {
         throw new AppError(400,ErrorMessage.INVALID_PARAM,ErrorCode.INVALID_PARAM,null);

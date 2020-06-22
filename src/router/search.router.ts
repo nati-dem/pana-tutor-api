@@ -18,6 +18,17 @@ export class SearchRouter {
   @Inject
   private userService: UserService;
 
+  // ?q=
+  searchUser = router.get('/users', asyncHandler( async (req, res, next) => {
+    const q = req.query.q;
+    console.log("## search user q:", q);
+    if( _.isEmpty(q) || q.length < 4  ){
+      throw new AppError(400, ErrorMessage.INVALID_PARAM, ErrorCode.INVALID_PARAM_SEARCH, null);
+    }
+    const resp = await this.userService.findUsersFromDB(q);
+    res.status(200).end(JSON.stringify(resp));
+  }));
+
   // entity=courses&q=
   index = router.get('/', asyncHandler( async (req, res, next) => {
     const entity = req.query.entity;

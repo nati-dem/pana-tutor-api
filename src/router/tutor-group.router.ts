@@ -31,11 +31,11 @@ export class TutorGroupRouter {
     res.status(200).end(JSON.stringify(resp));
   }));
 
-  findAllUserGroups = router.get('/user/all', asyncHandler( async (req, res, next) => {
+  findAllGroupsOfUser = router.get('/user/all', asyncHandler( async (req, res, next) => {
     const userId = global.userId;
     const groupStatus = req.query.groupStatus;
     const userStatus = req.query.userStatus;
-    console.log("## findAllUserGroups userId:: ", userId , ' &groupStatus::', groupStatus, ' &userStatus::', userStatus);
+    console.log("## findAllGroupsOfUser userId:: ", userId , ' &groupStatus::', groupStatus, ' &userStatus::', userStatus);
     if( !(groupStatus in GroupStatus) || !(userStatus in GroupMemberStatus) ) {
       throw new AppError(400, ErrorMessage.INVALID_PARAM, ErrorCode.INVALID_PARAM, null);
     }
@@ -43,11 +43,11 @@ export class TutorGroupRouter {
     res.status(200).end(JSON.stringify(resp));
   }));
 
-  findUserGroupsInCourse = router.get('/user/course', asyncHandler( async (req, res, next) => {
+  findGroupsInCourseOfUser = router.get('/user/course', asyncHandler( async (req, res, next) => {
     const courseId = parseInt(req.query.courseId, 10);
     const groupStatus = req.query.groupStatus;
     const userId = global.userId;
-    console.log("## findUserGroupsInCourse courseId:: ", courseId , ' & groupStatus::', groupStatus, ' & userId::', userId);
+    console.log("## findGroupsInCourseOfUser courseId:: ", courseId , ' & groupStatus::', groupStatus, ' & userId::', userId);
     if( !_.isNumber(courseId) || !(groupStatus in GroupStatus) ) {
       throw new AppError(400, ErrorMessage.INVALID_PARAM, ErrorCode.INVALID_PARAM, null);
     }

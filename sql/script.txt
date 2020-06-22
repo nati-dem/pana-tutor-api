@@ -165,6 +165,7 @@ CREATE TABLE panalearncom_tutor.users (
     address VARCHAR(128) NULL,
     user_role ENUM('administrator', 'author', 'contributor', 'instructor', 'subscriber') NOT NULL DEFAULT 'subscriber',
     status ENUM('active', 'pending', 'disabled', 'locked', 'deleted') NOT NULL DEFAULT 'active',
+    avatar VARCHAR(128) NULL,
     create_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

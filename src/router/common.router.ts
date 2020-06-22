@@ -57,18 +57,18 @@ export class CommonRouter {
     res.status(200).end(JSON.stringify(resp));
   }));
 
-  getPublicUserProfile = router.get('/public/user/:id', asyncHandler ( async (req, res, next) => {
+  getUsersPublicProfile = router.get('/public/users/profile/:id', asyncHandler ( async (req, res, next) => {
     const userId = parseInt(req.params.id,10)
-    console.log('getPublicUserProfile API, userId:', userId);
+    console.log('getUsersPublicProfile API, userId:', userId);
     if (!userId) {
       throw new AppError(400, ErrorMessage.INVALID_PARAM, ErrorCode.INVALID_PARAM, null);
     }
     // TODO - filter response fields
-    const resp = await this.userService.getUserById(userId);
-    if(!isSuccessHttpCode(resp.status)) {
-      throw new AppError(resp.status, resp.message, ErrorCode.PROFILE_ERROR, JSON.stringify(resp.data));
+    const resp = await this.userService.findUserFromDB(userId);
+    if(!resp || _.isEmpty(resp) || resp.length === 0) {
+      throw new AppError(404, ErrorMessage.PROFILE_ERROR, ErrorCode.PROFILE_ERROR, null);
     }
-    res.status(200).end(JSON.stringify(resp.data));
+    res.status(200).end(JSON.stringify(resp));
   }));
 
 }
