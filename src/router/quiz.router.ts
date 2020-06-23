@@ -80,7 +80,7 @@ export class QuizRouter {
     const quizId = parseInt(req.params.quizId,10);
     const userId = global.userId;
     console.log("## getUserQuizEntries quizId:: ", quizId, " & userId:", userId );
-    if( !_.isNumber(quizId) ) {
+    if( !quizId || !userId) {
       throw new AppError(400, ErrorMessage.INVALID_PARAM, ErrorCode.INVALID_PARAM, null);
     }
     const resp = await this.quizService.findUserQuizEntries(userId, quizId);
