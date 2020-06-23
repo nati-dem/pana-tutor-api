@@ -53,23 +53,34 @@ export class TutorGroupDAO extends BaseDAO {
     return this.find(caller, query, params);
   };
 
-  getAllUserGroups = async (userId, groupStatus, userStatus) => {
+  getAllUserGroups = async (userId, groupStatus, memberStatus) => {
     const query = `SELECT m.* , g.start_date , g.status FROM tutor_group g
       INNER JOIN tutor_group_members m on m.tutor_group_id = g.id
       where m.user_id = ? AND g.status = ? AND m.status = ? `;
-    const params = [userId, groupStatus, userStatus];
+    const params = [userId, groupStatus, memberStatus];
     const caller = "getAllUserGroups";
     return this.find(caller, query, params);
   }
 
   getAllGroupsInCourse = async (courseId, groupStatus) => {
     const query = `SELECT g.id as groupId, g.status as groupStatus, g.start_date,
-      m.user_id, m.user_role, m.status as userStatus FROM tutor_group g
+      m.user_id, m.user_role, m.status as member_status, u.name, u.email, u.phone
+      FROM tutor_group g
       LEFT JOIN tutor_group_members m on m.tutor_group_id = g.id
+      LEFT JOIN users u on u.user_id = m.user_id
       where g.course_id =? AND g.status = ? `;
     const params = [courseId, groupStatus];
-    const caller = "getAllCourseGroups";
+    const caller = "getAllGroupsInCourse";
     return this.find(caller, query, params);
   }
+
+  findUserDetailsInTutorGroup = async (groupId, groupStatus, userId) => {
+    const query = `SELECT m.* , g.start_date , g.status FROM tutor_group g
+      INNER JOIN tutor_group_members m on m.tutor_group_id = g.id
+      where g.id =? AND g.status = ? AND m.user_id = ? `;
+    const params = [groupId, groupStatus, userId];
+    const caller = "findUserDetailsInTutorGroup";
+    return this.find(caller, query, params);
+  };
 
 }

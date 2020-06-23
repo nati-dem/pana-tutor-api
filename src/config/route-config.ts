@@ -7,6 +7,7 @@ import { CoursesRouter } from "../router/courses.router";
 import { AuthRouter } from "../router/auth.router";
 import { QuizRouter } from "../router/quiz.router";
 import { TutorGroupRouter } from "../router/tutor-group.router";
+import { TutorPostRouter } from "../router/tutor-post.router";
 import { AuthService } from "../service/auth.service";
 import { AppConstant } from "./constants";
 import { isSuccessHttpCode } from "../../../pana-tutor-lib/util/common-helper";
@@ -34,6 +35,8 @@ export class RouteConfig extends ExpressConfig {
     private searchRouter: SearchRouter;
     @Inject
     private tutorGroupRouter: TutorGroupRouter;
+    @Inject
+    private tutorPostRouter: TutorPostRouter;
 
     public constructor() {
         super();
@@ -51,6 +54,7 @@ export class RouteConfig extends ExpressConfig {
         this._app.use(`${AppConstant.SERVER_SUB_DIR}/courses`,this.validateToken,this.coursesRouter.index);
         this._app.use(`${AppConstant.SERVER_SUB_DIR}/quiz`,this.validateToken,this.quizRouter.index);
         this._app.use(`${AppConstant.SERVER_SUB_DIR}/tutor-groups`,this.validateToken,this.tutorGroupRouter.index);
+        this._app.use(`${AppConstant.SERVER_SUB_DIR}/tutor-posts`,this.validateToken,this.tutorPostRouter.index);
         // this._app.all('*', this.validateToken);
       }
 
@@ -61,20 +65,20 @@ export class RouteConfig extends ExpressConfig {
         if (!isEmpty(token)) {
             const tokenResp = await this.authService.validateToken(token);
             if (!isSuccessHttpCode(tokenResp.status)) {
-            res.status(401).json({
-                code: ErrorCode.INVALID_AUTH,
-                message: tokenResp.message,
-            });
+                res.status(401).json({
+                    code: ErrorCode.INVALID_AUTH,
+                    message: tokenResp.message,
+                });
             } else {
-            const userId = await this.authService.getUserIdFromToken(token);
-            global.userId = userId;
-            next();
+                const userId = await this.authService.getUserIdFromToken(token);
+                global.userId = userId;
+                next();
             }
         } else {
             res.status(401).json({
             code: ErrorCode.INVALID_AUTH,
             message: ErrorMessage.UNAUTHORIZED,
-            });
+          });
         }
     };
 

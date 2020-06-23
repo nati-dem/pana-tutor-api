@@ -1,5 +1,3 @@
-import { AppConstant } from "../config/constants";
-import { CourseDAO } from "../dao/course.dao";
 import { TutorGroupDAO } from "../dao/tutor-group.dao";
 import { Inject } from "typescript-ioc";
 import { TutorGroupRequest, GroupMemberRequest } from "../../../pana-tutor-lib/model/tutor/tutor-group.interface";
@@ -45,21 +43,16 @@ export class TutorGroupService extends BaseService {
     return await this.groupDAO.findUserGroupsInCourse(courseId, groupStatus, userId);
   }
 
-  getAllUserGroups = async (userId, groupStatus, userStatus) => {
-    return await this.groupDAO.getAllUserGroups(userId, groupStatus, userStatus);
+  getAllUserGroups = async (userId, groupStatus, memberStatus) => {
+    return await this.groupDAO.getAllUserGroups(userId, groupStatus, memberStatus);
   }
 
   getAllGroupsInCourse = async (courseId, groupStatus) => {
     const result = await this.groupDAO.getAllGroupsInCourse(courseId, groupStatus);
-
-    const map = new Map()
+    const map = new Map();
     if(Array.isArray(result) && result.length > 0) {
       result.forEach(res => {
-        const user = {
-          userStatus: res.userStatus,
-          user_id: res.user_id,
-          user_role:res.user_role
-        };
+        const user = this.mapUserResult(res);
         if(!map.has(res.groupId)) {
           map.set(res.groupId, {
             groupId: res.groupId,
@@ -74,6 +67,18 @@ export class TutorGroupService extends BaseService {
       });
     }
     return Array.from(map.values());
+  }
+
+  private mapUserResult(res){
+    const user = {
+      member_status: res.member_status,
+      user_id: res.user_id,
+      user_role: res.user_role,
+      user_name: res.name,
+      email: res.email,
+      phone: res.phone
+    };
+    return user;
   }
 
 }

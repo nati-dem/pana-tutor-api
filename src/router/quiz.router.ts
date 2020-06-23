@@ -28,7 +28,7 @@ export class QuizRouter {
   start = router.post(
     "/start",
     asyncHandler(async (req, res, next) => {
-      // TODO - add quiz retry logic after submit
+      // TODO - add quiz retry logic after first submit
       const reqObj = req.body as QuizInit;
       if (
         !_.isNumber(reqObj.quiz_id) ||

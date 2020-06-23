@@ -1,7 +1,6 @@
 import express from "express";
-import { isEmpty } from "lodash";
+import _ from "lodash";
 import { AppError } from "../common/app-error";
-const asyncHandler = require("express-async-handler");
 import { UserService } from "../service/user.service";
 import { isSuccessHttpCode } from "../../../pana-tutor-lib/util/common-helper";
 import {
@@ -10,6 +9,7 @@ import {
 } from "../../../pana-tutor-lib/enum/constants";
 import { UserSignupRequest } from "../../../pana-tutor-lib/model/user/user-auth.interface";
 import { Inject } from "typescript-ioc";
+const asyncHandler = require("express-async-handler");
 const router = express.Router();
 
 export class UserRouter {
@@ -20,7 +20,7 @@ export class UserRouter {
     res.send("Hello world!");
   });
 
-  getProfileRouter = router.get(
+  getMyProfileRouter = router.get(
     "/profile/:id",
     asyncHandler(async (req, res, next) => {
       const userId = req.params.id;
@@ -30,26 +30,24 @@ export class UserRouter {
         "global.userId::",
         global.userId
       );
-
       if (userId !== global.userId) {
         throw new AppError(
-          400,
+          403,
           ErrorMessage.FORBIDDEN,
           ErrorCode.FORBIDDEN_ACCESS,
           null
         );
       }
-
-      const resp = await this.userService.getUserById(userId);
-      if (!isSuccessHttpCode(resp.status)) {
+      const resp = await this.userService.findUserFromDB(userId);
+      if (!resp || _.isEmpty(resp) || resp.length === 0) {
         throw new AppError(
-          resp.status,
-          resp.message,
+          404,
+          ErrorMessage.PROFILE_ERROR,
           ErrorCode.PROFILE_ERROR,
-          JSON.stringify(resp.data)
+          null
         );
       }
-      res.status(200).end(JSON.stringify(resp.data));
+      res.status(200).end(JSON.stringify(resp));
     })
   );
 

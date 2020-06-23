@@ -9,6 +9,7 @@ import { Inject } from 'typescript-ioc';
 import {EnrollService} from "../service/enroll.service";
 import {CourseJoinRequest} from "../../../pana-tutor-lib/model/course/course-join.interface";
 import {TutorRequest} from "../../../pana-tutor-lib/model/tutor/tutor-request.interface";
+import {UserService} from "../service/user.service";
 
 const router = express.Router();
 
@@ -16,6 +17,8 @@ export class CommonRouter {
 
   @Inject
   private enrollService: EnrollService;
+  @Inject
+  private userService: UserService
 
   index = router.get( "/", ( req, res ) => {
     res.send( "Hello world!" );
@@ -51,6 +54,20 @@ export class CommonRouter {
     }
     // TODO - validate if both User and Course exist and are active
     const resp = await this.enrollService.requestTutor(reqObj);
+    res.status(200).end(JSON.stringify(resp));
+  }));
+
+  getUsersPublicProfile = router.get('/public/users/profile/:id', asyncHandler ( async (req, res, next) => {
+    const userId = parseInt(req.params.id,10)
+    console.log('getUsersPublicProfile API, userId:', userId);
+    if (!userId) {
+      throw new AppError(400, ErrorMessage.INVALID_PARAM, ErrorCode.INVALID_PARAM, null);
+    }
+    // TODO - filter response fields
+    const resp = await this.userService.findUserFromDB(userId);
+    if(!resp || _.isEmpty(resp) || resp.length === 0) {
+      throw new AppError(404, ErrorMessage.PROFILE_ERROR, ErrorCode.PROFILE_ERROR, null);
+    }
     res.status(200).end(JSON.stringify(resp));
   }));
 
