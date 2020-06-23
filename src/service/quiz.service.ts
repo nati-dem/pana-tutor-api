@@ -63,14 +63,13 @@ export class QuizService {
 
   findUserQuizEntries = async (userId, quizId) => {
     const result = await this.quizDAO.findUserQuizEntries(userId, quizId);
-    const map = new Map()
+    const map = new Map();
     if(Array.isArray(result) && result.length > 0) {
       result.forEach(res => {
 
         const ans = res.que_id ? {que_id: res.que_id, answer: res.answer, is_correct: res.is_correct} : null;
 
         if(!map.has(res.initId)) {
-
           map.set(res.initId, {
             initId: res.initId,
             quiz_id: res.initId,

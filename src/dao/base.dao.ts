@@ -59,5 +59,23 @@ export class BaseDAO {
     return resp;
   };
 
-  delete = async () => {};
+  delete = async (caller, query, paramArr, addParams?:any) => {
+    let resp;
+    await DS.getConnection()
+      .query(query, paramArr)
+      .then(([rows, fields]) => {
+        console.log(caller + " db resp -> ", rows);
+        resp = [
+          {
+            ...(addParams ? addParams : {})
+          },
+        ];
+      })
+      .catch(err => {
+        console.log(err)
+        throw new AppError(500, ErrorMessage.DB_DELETE_ERROR, caller,null);
+      });
+    return resp;
+  };
+
 }

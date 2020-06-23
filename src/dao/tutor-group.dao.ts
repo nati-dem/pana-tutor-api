@@ -74,4 +74,13 @@ export class TutorGroupDAO extends BaseDAO {
     return this.find(caller, query, params);
   }
 
+  findUserDetailsInTutorGroup = async (groupId, groupStatus, userId) => {
+    const query = `SELECT m.* , g.start_date , g.status FROM tutor_group g
+      INNER JOIN tutor_group_members m on m.tutor_group_id = g.id
+      where g.id =? AND g.status = ? AND m.user_id = ? `;
+    const params = [groupId, groupStatus, userId];
+    const caller = "findUserDetailsInTutorGroup";
+    return this.find(caller, query, params);
+  };
+
 }

@@ -119,23 +119,43 @@ CREATE TABLE panalearncom_tutor.tutor_group_members (
     FOREIGN KEY (tutor_group_id) REFERENCES panalearncom_tutor.tutor_group(id)
 );
 
+CREATE TABLE panalearncom_tutor.tutor_group_meeting (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    tutor_group_id INT UNSIGNED NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    date_time VARCHAR(30) NOT NULL,
+    recurring_until VARCHAR(30) NULL,
+    user_id INT UNSIGNED NOT NULL,
+    FOREIGN KEY (tutor_group_id) REFERENCES panalearncom_tutor.tutor_group(id)
+);
+
 CREATE TABLE panalearncom_tutor.tutor_board_posts (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     course_id INT UNSIGNED NOT NULL,
     post_title VARCHAR(128) NOT NULL,
     post_content VARCHAR(255) NULL,
-    post_type ENUM('generic','assignment', 'meeting', 'media', 'resource', 'link') NOT NULL DEFAULT 'generic',
-    attachment_id INT UNSIGNED NULL,
-    status ENUM('published', 'hidden') NOT NULL DEFAULT 'published',
-    FOREIGN KEY (attachment_id) REFERENCES panalearncom_tutor.attachment(id)
+    post_type ENUM('generic','assignment', 'media', 'material', 'link') NOT NULL DEFAULT 'generic',
+    points INT UNSIGNED NOT NULL DEFAULT 0,
+    due_date DATETIME NULL,
+    status ENUM('published', 'draft', 'hidden') NOT NULL DEFAULT 'published',
+    created_by INT UNSIGNED NOT NULL,
+    post_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE panalearncom_tutor.tutor_board_post_access (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     post_id INT UNSIGNED NOT NULL,
     group_id INT UNSIGNED NOT NULL,
-    FOREIGN KEY (post_id) REFERENCES panalearncom_tutor.tutor_board_posts(id),
+    FOREIGN KEY (post_id) REFERENCES panalearncom_tutor.tutor_board_posts(id) ON DELETE CASCADE,
     FOREIGN KEY (group_id) REFERENCES panalearncom_tutor.tutor_group(id)
+);
+
+CREATE TABLE panalearncom_tutor.tutor_board_post_attachments (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    board_post_id INT UNSIGNED NOT NULL,
+    attachment_id INT UNSIGNED NOT NULL,
+    FOREIGN KEY (board_post_id) REFERENCES panalearncom_tutor.tutor_board_posts(id),
+    FOREIGN KEY (attachment_id) REFERENCES panalearncom_tutor.attachment(id)
 );
 
 /* should tutor price be dt for same course depending on group? */
