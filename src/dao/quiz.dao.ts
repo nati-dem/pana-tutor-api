@@ -21,7 +21,7 @@ export class QuizDAO extends BaseDAO {
   getSubmittedQuiz = async (req: QuizSubmission, studentId) => {
     const query = `SELECT  sub.* FROM quiz_submission sub
       INNER JOIN quiz_init init ON sub.quiz_init_id = init.id
-      WHERE sub.quiz_init_id AND init.student_id = ? `;
+      WHERE sub.quiz_init_id=? AND init.student_id = ? `;
     const params = [req.quiz_init_id, studentId];
     const caller = "getSubmittedQuiz";
     return this.find(caller, query, params);

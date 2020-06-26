@@ -39,10 +39,9 @@ export class QuizService {
   };
 
   isCorrectAnswer = (req, queResp) => {
-    console.log('submit ans::', req.answer)
     const choice = queResp.data.acf.correct_answer[0]
-    console.log('correct choice from API::', choice)
-    const iscorrectAns = req.answer === queResp.data.acf[choice] ? YesNoChoice.yes: YesNoChoice.no;
+    console.log('submit ans::', req.answer, ' & correct ans from WP::', choice)
+    const iscorrectAns = req.answer === choice ? YesNoChoice.yes: YesNoChoice.no;
     console.log('iscorrectAns::', iscorrectAns)
     return iscorrectAns;
   }
