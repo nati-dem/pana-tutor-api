@@ -88,7 +88,7 @@ export class QuizService {
         if(!map.has(res.initId)) {
           map.set(res.initId, {
             initId: res.initId,
-            quiz_id: res.initId,
+            quiz_id: res.quiz_id,
             student_id: res.student_id,
             answers: [ans],
             ...(res.total_score? {total_score: res.total_score, date_submit: res.date_submit} : {})

@@ -122,7 +122,7 @@ export class QuizRouter {
         " & userId:",
         userId
       );
-      if (!_.isNumber(quizId)) {
+      if (!quizId || !userId) {
         throw new AppError(
           400,
           ErrorMessage.INVALID_PARAM,
