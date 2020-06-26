@@ -42,7 +42,7 @@ export class QuizRouter {
 
   submitAnswer = router.post("/submit-answer", asyncHandler(async (req, res, next) => {
       const reqObj = req.body as QuizAnsEntry;
-      if (!_.isNumber(reqObj.quiz_init_id) || !_.isNumber(reqObj.que_id)) {
+      if (!_.isNumber(reqObj.quiz_init_id) || !_.isNumber(reqObj.que_id) || _.isEmpty(reqObj.answer)  ) {
         throw new AppError(400, ErrorMessage.INVALID_PARAM, ErrorCode.INVALID_PARAM,null);
       }
       const queResp = await this.getQuestionDetails(reqObj);
