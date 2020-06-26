@@ -52,11 +52,14 @@ export class QuizService {
 
   isCorrectAnswer = (req, queResp) => {
     console.log("submit ans::", req.answer);
+    const choice = queResp.data.acf.correct_answer[0];
+    console.log("correct choice from API::", choice);
     const iscorrectAns =
-      req.answer === queResp.data.acf.correct_answer[0]
+      req.answer === queResp.data.acf[choice]
         ? YesNoChoice.yes
         : YesNoChoice.no;
     console.log("iscorrectAns::", iscorrectAns);
+
     return iscorrectAns;
   };
 
@@ -80,27 +83,31 @@ export class QuizService {
   findUserQuizEntries = async (userId, quizId) => {
     const result = await this.quizDAO.findUserQuizEntries(userId, quizId);
     const map = new Map();
-    if(Array.isArray(result) && result.length > 0) {
-      result.forEach(res => {
+    if (Array.isArray(result) && result.length > 0) {
+      result.forEach((res) => {
+        const ans = res.que_id
+          ? {
+              que_id: res.que_id,
+              answer: res.answer,
+              is_correct: res.is_correct,
+            }
+          : null;
 
-        const ans = res.que_id ? {que_id: res.que_id, answer: res.answer, is_correct: res.is_correct} : null;
-
-        if(!map.has(res.initId)) {
+        if (!map.has(res.initId)) {
           map.set(res.initId, {
             initId: res.initId,
             quiz_id: res.quiz_id,
             student_id: res.student_id,
             answers: [ans],
-            ...(res.total_score? {total_score: res.total_score, date_submit: res.date_submit} : {})
+            ...(res.total_score
+              ? { total_score: res.total_score, date_submit: res.date_submit }
+              : {}),
           });
         } else {
-          map.get(res.initId)
-          .answers.push(ans);
+          map.get(res.initId).answers.push(ans);
         }
-
       });
     }
     return Array.from(map.values());
-  }
-
+  };
 }
