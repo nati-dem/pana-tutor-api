@@ -46,7 +46,7 @@ export class QuizRouter {
         throw new AppError(400, ErrorMessage.INVALID_PARAM, ErrorCode.INVALID_PARAM,null);
       }
       const queResp = await this.getQuestionDetails(reqObj);
-      const resp = await this.quizService.submitAns(reqObj, queResp);
+      const resp = await this.quizService.submitAnswer(reqObj, queResp);
 
       res.status(200).end(JSON.stringify(resp));
     })
@@ -54,7 +54,7 @@ export class QuizRouter {
 
   getQuestionDetails = async (reqObj) => {
     const queResp = await this.courseService.getQuestionById(reqObj.que_id);
-    console.log('@submitAnswer queResp::', queResp)
+    console.log('@submitAnswer queApiResp::', queResp)
     if (!isSuccessHttpCode(queResp.status)) {
       throw new AppError(queResp.status, queResp.message, ErrorCode.QUE_GET_ERROR, JSON.stringify(queResp.data));
     }
@@ -68,8 +68,10 @@ export class QuizRouter {
         throw new AppError(400, ErrorMessage.INVALID_PARAM, ErrorCode.INVALID_PARAM, null);
       }
       // submit last question
-      const queResp = await this.getQuestionDetails(reqObj);
-      await this.quizService.submitAns(reqObj, queResp);
+      if(!_.isEmpty(reqObj.answer)) {
+        const queResp = await this.getQuestionDetails(reqObj);
+        await this.quizService.submitAnswer(reqObj, queResp);
+      }
       // submit quiz
       const resp = await this.quizService.submitQuiz(reqObj);
       res.status(200).end(JSON.stringify(resp));

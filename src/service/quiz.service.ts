@@ -15,7 +15,7 @@ export class QuizService {
   startQuiz = async (req: QuizInit) => {
     // TODO - validate if user has permission to start quiz using Enrollment / active Tutor session
     console.log('global UserId::', global.userId)
-    const initQuizFound = await this.quizDAO.getQuizInit(req.quiz_id, global.userId);
+    const initQuizFound = await this.quizDAO.findQuizInitNotSubmitted(req.quiz_id, global.userId);
     let resp = initQuizFound;
     if (initQuizFound.length === 0) {
       resp = this.quizDAO.startQuiz(req, global.userId);
@@ -23,14 +23,14 @@ export class QuizService {
     return resp;
   };
 
-  submitAns = async (req: QuizAnsEntry, queResp) => {
+  submitAnswer = async (req: QuizAnsEntry, queResp) => {
     req.marked_for_review = req.marked_for_review === YesNoChoice.yes ? YesNoChoice.yes: YesNoChoice.no;
     req.is_correct = this.isCorrectAnswer(req, queResp);
     let result = await this.quizDAO.getSubmittedAnswer(req.quiz_init_id, req.que_id, global.userId);
     if (result.length === 0) {
       result = await this.quizDAO.submitAnswer(req);
       console.log('submit-answer---->', result)
-    } else if(result && result[0].id){ // update submitted answer
+    } else if(Array.isArray(result) && result[0].id){ // update submitted answer
       result = await this.quizDAO.updateSubmittedAnswer(req, result[0].id);
     }
 

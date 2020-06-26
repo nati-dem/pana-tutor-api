@@ -51,6 +51,16 @@ export class QuizDAO extends BaseDAO {
     return this.find(caller, query, params);
   };
 
+  findQuizInitNotSubmitted = async (quizId, userId) => {
+    const query = `SELECT init.id, init.quiz_id, init.student_id, init.enrollment_id, init.timer
+      FROM quiz_init init
+      WHERE init.quiz_id = ? AND init.student_id = ?
+      AND init.id NOT IN (select quiz_init_id from quiz_submission where quiz_init_id=init.id ) `;
+    const params = [quizId, userId];
+    const caller = "findQuizInitNotSubmitted";
+    return this.find(caller, query, params);
+  };
+
   startQuiz = async (req: QuizInit, userId) => {
     const query = `INSERT INTO quiz_init( quiz_id, student_id, enrollment_id, timer) VALUES (?,?,?,?)`;
     const params = [req.quiz_id, userId, req.enrollment_id, req.timer];
