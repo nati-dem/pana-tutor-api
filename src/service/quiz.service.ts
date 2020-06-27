@@ -17,7 +17,7 @@ export class QuizService {
   startQuiz = async (req: QuizInit) => {
     // TODO - validate if user has permission to start quiz using Enrollment / active Tutor session
     console.log("global UserId::", global.userId);
-    const initQuizFound = await this.quizDAO.getQuizInit(
+    const initQuizFound = await this.quizDAO.findQuizInitNotSubmitted(
       req.quiz_id,
       global.userId
     );
@@ -28,7 +28,7 @@ export class QuizService {
     return resp;
   };
 
-  submitAns = async (req: QuizAnsEntry, queResp) => {
+  submitAnswer = async (req: QuizAnsEntry, queResp) => {
     req.marked_for_review =
       req.marked_for_review === YesNoChoice.yes
         ? YesNoChoice.yes
@@ -42,7 +42,7 @@ export class QuizService {
     if (result.length === 0) {
       result = await this.quizDAO.submitAnswer(req);
       console.log("submit-answer---->", result);
-    } else if (result && result[0].id) {
+    } else if (Array.isArray(result) && result[0].id) {
       // update submitted answer
       result = await this.quizDAO.updateSubmittedAnswer(req, result[0].id);
     }
@@ -51,15 +51,11 @@ export class QuizService {
   };
 
   isCorrectAnswer = (req, queResp) => {
-    console.log("submit ans::", req.answer);
     const choice = queResp.data.acf.correct_answer[0];
-    console.log("correct choice from API::", choice);
+    console.log("submit ans::", req.answer, " & correct ans from WP::", choice);
     const iscorrectAns =
-      req.answer === queResp.data.acf[choice]
-        ? YesNoChoice.yes
-        : YesNoChoice.no;
+      req.answer === choice ? YesNoChoice.yes : YesNoChoice.no;
     console.log("iscorrectAns::", iscorrectAns);
-
     return iscorrectAns;
   };
 

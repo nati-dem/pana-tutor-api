@@ -42,7 +42,7 @@ export class TutorGroupRouter {
     res.status(200).end(JSON.stringify(resp));
   }));
 
-  findGroupsInCourseOfUser = router.get('/user/course', asyncHandler( async (req, res, next) => {
+  findGroupsOfUserInCourse = router.get('/user/course', asyncHandler( async (req, res, next) => {
     const courseId = parseInt(req.query.courseId, 10);
     const groupStatus = req.query.groupStatus;
     const userId = global.userId;

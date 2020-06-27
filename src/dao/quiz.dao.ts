@@ -20,7 +20,7 @@ export class QuizDAO extends BaseDAO {
   getSubmittedQuiz = async (req: QuizSubmission, studentId) => {
     const query = `SELECT  sub.* FROM quiz_submission sub
       INNER JOIN quiz_init init ON sub.quiz_init_id = init.id
-      WHERE sub.quiz_init_id AND init.student_id = ? `;
+      WHERE sub.quiz_init_id=? AND init.student_id = ? `;
     const params = [req.quiz_init_id, studentId];
     const caller = "getSubmittedQuiz";
     return this.find(caller, query, params);
@@ -47,6 +47,16 @@ export class QuizDAO extends BaseDAO {
     const query = `SELECT quiz_id, student_id, enrollment_id, timer FROM quiz_init WHERE quiz_id = ? AND student_id = ? `;
     const params = [quizId, userId];
     const caller = "getQuizInt";
+    return this.find(caller, query, params);
+  };
+
+  findQuizInitNotSubmitted = async (quizId, userId) => {
+    const query = `SELECT init.id, init.quiz_id, init.student_id, init.enrollment_id, init.timer
+      FROM quiz_init init
+      WHERE init.quiz_id = ? AND init.student_id = ?
+      AND init.id NOT IN (select quiz_init_id from quiz_submission where quiz_init_id=init.id ) `;
+    const params = [quizId, userId];
+    const caller = "findQuizInitNotSubmitted";
     return this.find(caller, query, params);
   };
 

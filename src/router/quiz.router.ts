@@ -60,7 +60,7 @@ export class QuizRouter {
     "/submit-answer",
     asyncHandler(async (req, res, next) => {
       const reqObj = req.body as QuizAnsEntry;
-
+      console.log("submit-answer api req::", reqObj);
       if (
         !_.isNumber(reqObj.quiz_init_id) ||
         !_.isNumber(reqObj.que_id) ||
@@ -74,7 +74,7 @@ export class QuizRouter {
         );
       }
       const queResp = await this.getQuestionDetails(reqObj);
-      const resp = await this.quizService.submitAns(reqObj, queResp);
+      const resp = await this.quizService.submitAnswer(reqObj, queResp);
 
       res.status(200).end(JSON.stringify(resp));
     })
@@ -82,7 +82,7 @@ export class QuizRouter {
 
   getQuestionDetails = async (reqObj) => {
     const queResp = await this.courseService.getQuestionById(reqObj.que_id);
-    console.log("@submitAnswer queResp::", queResp);
+    console.log("@submitAnswer queApiResp::", queResp);
     if (!isSuccessHttpCode(queResp.status)) {
       throw new AppError(
         queResp.status,
@@ -108,8 +108,10 @@ export class QuizRouter {
         );
       }
       // submit last question
-      const queResp = await this.getQuestionDetails(reqObj);
-      await this.quizService.submitAns(reqObj, queResp);
+      if (!_.isEmpty(reqObj.answer)) {
+        const queResp = await this.getQuestionDetails(reqObj);
+        await this.quizService.submitAnswer(reqObj, queResp);
+      }
       // submit quiz
       const resp = await this.quizService.submitQuiz(reqObj);
       res.status(200).end(JSON.stringify(resp));
