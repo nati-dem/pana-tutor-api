@@ -38,6 +38,35 @@ export class UserService {
         return result;
     }
 
+    getUserAutherizedResources = async (id: number) => {
+        console.log('getUserAutherizedResources from DB...')
+        const userResult = await this.userDAO.getUserById(id);
+        const response:any = {};
+
+        if(userResult && userResult.length > 0) {
+            const userInfo = userResult[0];
+            response.user_role = userInfo.user_role;
+            response.name = userInfo.name;
+            response.user_id = userInfo.user_id;
+            const map = new Map();
+            const userGroups = await this.userDAO.getUserGroups(id);
+            userGroups.forEach(res => {
+                const group = {groupId: res.tutor_group_id, user_role: res.user_role, status: res.status}
+                if(!map.has(res.course_id)) {
+                  map.set(res.course_id, {
+                    course_id: res.course_id,
+                    groups: [group]
+                  });
+                } else {
+                  map.get(res.course_id)
+                  .groups.push(group);
+                }
+            });
+            response.courses = Array.from(map.values());
+        }
+        return response;
+    }
+
     findUsersFromDB = async (q: string) => {
         return await this.userDAO.findUsers(q);
     }
