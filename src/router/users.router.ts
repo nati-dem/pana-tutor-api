@@ -51,22 +51,21 @@ export class UserRouter {
     })
   );
 
-  profileUpdateRouter = router.post(
-    "/profile",
+  userAuthInfo = router.get(
+    "/auth-info",
     asyncHandler(async (req, res, next) => {
       const userId = global.userId;
-      const reqObj = req.body as UserSignupRequest;
-      // TODO - add request payload validation
-      const resp = await this.userService.updateUserProfile(userId, reqObj);
-      if (!isSuccessHttpCode(resp.status)) {
+      console.log("userAuthInfo API call, userId:", userId);
+      const resp = await this.userService.getUserAutherizedResources(userId);
+      if (!resp || _.isEmpty(resp) || resp.length === 0) {
         throw new AppError(
-          resp.status,
-          resp.message,
-          ErrorCode.PROFILE_UPDATE_ERROR,
-          JSON.stringify(resp.data)
+          404,
+          ErrorMessage.GET_AUTH_INFO_ERROR,
+          ErrorCode.GET_AUTH_INFO_ERROR,
+          null
         );
       }
-      res.status(200).end(JSON.stringify(resp.data));
+      res.status(200).end(JSON.stringify(resp));
     })
   );
 }

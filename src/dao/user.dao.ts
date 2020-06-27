@@ -10,6 +10,15 @@ export class UserDAO extends BaseDAO {
     return this.find(caller, query, params);
   };
 
+  getUserGroups = async (userId:number) => {
+    const query = `SELECT m.user_id, g.course_id, m.tutor_group_id,m.user_role,m.status FROM tutor_group_members m
+      INNER JOIN tutor_group g ON g.id = m.tutor_group_id
+      WHERE m.user_id = ? AND m.status = ? AND g.status = ? `;
+    const params = [userId, 'active', 'active'];
+    const caller = "getUserGroups";
+    return this.find(caller, query, params);
+  };
+
   findUsers = async (q:string) => {
     const query = `SELECT * FROM users WHERE name LIKE ? OR email LIKE ? `;
     const params = [`%${q}%`, `%${q}%`];
