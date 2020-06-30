@@ -1,5 +1,6 @@
 import { BaseDAO } from "./base.dao";
 import {UserSignupRequest} from "../../../pana-tutor-lib/model/user/user-auth.interface";
+import _ from 'lodash';
 
 export class UserDAO extends BaseDAO {
 
@@ -34,6 +35,47 @@ export class UserDAO extends BaseDAO {
     const params = [req.id, req.name, req.email, phone, '', role];
     const caller = "saveUser";
     return this.insert(caller, query, params);
+  };
+
+  updateUser = async (req: UserSignupRequest, userId:number) => {
+    const params: any[] = [];
+    let fields = "";
+    if(req.name && !_.isEmpty(req.name)){
+      fields += ' name=?, '
+      params.push(req.name)
+    }
+    if(req.nickname && !_.isEmpty(req.nickname)){
+      fields += 'nickname=?, '
+      params.push(req.nickname)
+    }
+    if(req.phone && !_.isEmpty(req.phone)){
+      fields += 'phone=?, '
+      params.push(req.phone)
+    }
+    if(req.address && !_.isEmpty(req.address)){
+      fields += 'address=?, '
+      params.push(req.address)
+    }
+    if(req.country && !_.isEmpty(req.country)){
+      fields += 'country=?, '
+      params.push(req.country)
+    }
+    if(req.bio && !_.isEmpty(req.bio)){
+      fields += 'bio=?, '
+      params.push(req.bio)
+    }
+    if(req.time_zone && !_.isEmpty(req.time_zone)){
+      fields += 'time_zone=? ';
+      params.push(req.time_zone)
+    }
+    if(params.length !== 0) {
+      const query = `UPDATE users set ${fields} WHERE user_id = ? `;
+      params.push(userId);
+      const caller = "updateUser";
+      return this.update(caller, query, params, userId);
+    } else {
+      return {};
+    }
   };
 
 }

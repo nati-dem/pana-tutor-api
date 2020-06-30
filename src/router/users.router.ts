@@ -18,7 +18,7 @@ export class UserRouter {
     res.send( "Hello world!" );
   });
 
-  getMyProfileRouter = router.get('/profile/:id', asyncHandler ( async (req, res, next) => {
+  getMyProfile = router.get('/profile/:id', asyncHandler ( async (req, res, next) => {
     const userId = req.params.id;
     console.log('getProfile API call, userId:', userId, 'global.userId::', global.userId);
     if (userId !== global.userId) {
@@ -31,16 +31,36 @@ export class UserRouter {
     res.status(200).end(JSON.stringify(resp));
   }));
 
-  profileUpdateRouter = router.post('/profile', asyncHandler ( async (req, res, next) => {
+  profileUpdate = router.post('/profile', asyncHandler ( async (req, res, next) => {
     const userId = global.userId;
     const reqObj = req.body as UserSignupRequest;
     // TODO - add request payload validation
-    const resp = await this.userService.updateUserProfile(userId, reqObj);
-    if(!isSuccessHttpCode(resp.status)) {
-      throw new AppError(resp.status, resp.message, ErrorCode.PROFILE_UPDATE_ERROR, JSON.stringify(resp.data));
-    }
-    res.status(200).end(JSON.stringify(resp.data));
+    const mappedReq = this.mapUpdateProfileRequest(reqObj);
+    console.log("profileUpdate API call:", mappedReq);
+    // only update WP if password / name changed
+    await this.userService.updateUserInWP(userId,reqObj);
+    this.userService.updateUserInDB(userId,reqObj);
+    res.status(200).end(JSON.stringify(reqObj));
   }));
+
+  mapUpdateProfileRequest(reqObj) {
+    return {
+      ...(reqObj.name ? {name:reqObj.name} : {} ),
+      ...(reqObj.nickname ? {nickname:reqObj.nickname} : {} ),
+      ...(reqObj.first_name ? {first_name:reqObj.first_name} : {} ),
+      ...(reqObj.password ? {password:reqObj.password} : {} ),
+      ...(reqObj.meta ? {meta:reqObj.meta} : {} ),
+      ...(reqObj.phone ? {phone:reqObj.phone} : {} ),
+      ...(reqObj.address ? {address:reqObj.address} : {} ),
+      ...(reqObj.country ? {country:reqObj.country} : {} ),
+      ...(reqObj.bio ? {bio:reqObj.bio} : {} ),
+      ...(reqObj.time_zone ? {time_zone:reqObj.time_zone} : {} ),
+      } as UserSignupRequest;
+  }
+
+  mapUserWpUserFields(resp) {
+    return _.pick(resp.data, ["id", "username", "name", "first_name", "last_name", "email", "roles", "meta"]);
+  }
 
   userAuthInfo = router.get('/auth-info', asyncHandler ( async (req, res, next) => {
     const userId = global.userId;

@@ -3,6 +3,10 @@ import {Inject} from "typescript-ioc";
 import {UserLoginRequest, UserSignupRequest} from "../../../pana-tutor-lib/model/user/user-auth.interface";
 import {AppConstant} from '../config/constants';
 import { UserDAO } from "../dao/user.dao";
+import {ErrorCode, ErrorMessage} from "../../../pana-tutor-lib/enum/constants";
+import {isSuccessHttpCode} from "../../../pana-tutor-lib/util/common-helper";
+import {AppError} from '../common/app-error';
+import _ from 'lodash';
 
 export class UserService {
 
@@ -19,6 +23,19 @@ export class UserService {
     updateUserProfile = async (id: number, reqObj: UserSignupRequest) => {
         const profileUrl = `${AppConstant.USER_URL}/${id}`
         return await this.apiExecuter.doPost(reqObj, profileUrl, true);
+    }
+
+    updateUserInWP = async (userId: number, mappedReq: UserSignupRequest) => {
+        if(!_.isEmpty(mappedReq.name) || !_.isEmpty(mappedReq.password)) {
+            const resp = await this.updateUserProfile(userId, mappedReq);
+            if(!isSuccessHttpCode(resp.status)) {
+              throw new AppError(resp.status, resp.message, ErrorCode.PROFILE_UPDATE_ERROR, JSON.stringify(resp.data));
+            }
+          }
+    }
+
+    updateUserInDB = async (id: number, reqObj: UserSignupRequest) => {
+        return await this.userDAO.updateUser(reqObj, id);
     }
 
     findUserFromDB = async (id: number) => {

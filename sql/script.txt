@@ -177,17 +177,18 @@ CREATE TABLE panalearncom_tutor.tutor_group_pay_history (
 );
 
 CREATE TABLE panalearncom_tutor.users (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    user_id INT UNSIGNED NOT NULL UNIQUE,
+    user_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(128) NOT NULL,
+    nickname VARCHAR(128) NULL,
     email VARCHAR(128) NOT NULL UNIQUE,
     phone VARCHAR(20) NULL,
-    address VARCHAR(128) NULL,
+    address VARCHAR(50) NULL,
+    country VARCHAR(20) NULL,
     bio VARCHAR(255) NULL,
     user_role ENUM('administrator', 'author', 'contributor', 'instructor', 'subscriber') NOT NULL DEFAULT 'subscriber',
     status ENUM('active', 'pending', 'disabled', 'locked', 'deleted') NOT NULL DEFAULT 'active',
     avatar VARCHAR(128) NULL,
-    timeZone VARCHAR(10) NULL,
+    time_zone VARCHAR(10) NULL,
     create_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
