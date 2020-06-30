@@ -65,6 +65,7 @@ export class UserService {
             const userInfo = userResult[0];
             response.user_role = userInfo.user_role;
             response.name = userInfo.name;
+            response.email = userInfo.email;
             response.user_id = userInfo.user_id;
             const map = new Map();
             const userGroups = await this.userDAO.getUserGroups(id);
