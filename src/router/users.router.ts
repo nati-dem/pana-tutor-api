@@ -46,7 +46,7 @@ export class UserRouter {
     const userId = global.userId;
     console.log('userAuthInfo API call, userId:', userId);
     const resp = await this.userService.getUserAutherizedResources(userId);
-    if(!resp || _.isEmpty(resp) || resp.length === 0 ) {
+    if(!resp || _.isEmpty(resp) ) {
       throw new AppError(404, ErrorMessage.GET_AUTH_INFO_ERROR, ErrorCode.GET_AUTH_INFO_ERROR, null);
     }
     res.status(200).end(JSON.stringify(resp));

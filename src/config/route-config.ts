@@ -8,6 +8,7 @@ import { AuthRouter } from "../router/auth.router";
 import { QuizRouter } from "../router/quiz.router";
 import { TutorGroupRouter } from "../router/tutor-group.router";
 import { TutorPostRouter } from "../router/tutor-post.router";
+import { TutorAdminRouter } from "../router/tutor-admin.router";
 import { AuthService } from "../service/auth.service";
 import { AppConstant } from "./constants";
 import { isSuccessHttpCode } from "../../../pana-tutor-lib/util/common-helper";
@@ -37,6 +38,8 @@ export class RouteConfig extends ExpressConfig {
     private tutorGroupRouter: TutorGroupRouter;
     @Inject
     private tutorPostRouter: TutorPostRouter;
+    @Inject
+    private tutorAdminRouter: TutorAdminRouter;
 
     public constructor() {
         super();
@@ -55,6 +58,7 @@ export class RouteConfig extends ExpressConfig {
         this._app.use(`${AppConstant.SERVER_SUB_DIR}/quiz`,this.validateToken,this.quizRouter.index);
         this._app.use(`${AppConstant.SERVER_SUB_DIR}/tutor-groups`,this.validateToken,this.tutorGroupRouter.index);
         this._app.use(`${AppConstant.SERVER_SUB_DIR}/tutor-posts`,this.validateToken,this.tutorPostRouter.index);
+        this._app.use(`${AppConstant.SERVER_SUB_DIR}/tutor-admin`,this.validateToken,this.tutorAdminRouter.index);
         // this._app.all('*', this.validateToken);
       }
 

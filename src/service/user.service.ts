@@ -28,6 +28,7 @@ export class UserService {
             result = await this.getUserById(id);
             console.log('user resp from wp::',result)
             if(result.data && result.data.id){
+                this.userDAO.saveUser(result.data); // save in db async
                 result = this.mapWpUserResponse(result);
             } else {
                 result = {};
@@ -72,8 +73,7 @@ export class UserService {
     }
 
     mapWpUserResponse(result){
-        this.userDAO.saveUser(result.data); // save in db async
-        result = {
+        const r = {
             user_id: result.data.id,
             name: result.data.name,
             email: result.data.email,
@@ -83,7 +83,7 @@ export class UserService {
             status: 'active',
             create_date: result.data.registered_date
         };
-        return result;
+        return r;
     }
 
     saveUser = async (req: UserSignupRequest) => {
