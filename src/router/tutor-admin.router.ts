@@ -4,7 +4,7 @@ import {AppError} from '../common/app-error';
 import {ErrorCode, ErrorMessage} from "../../../pana-tutor-lib/enum/constants";
 import { Inject } from 'typescript-ioc';
 import {TutorAdminService} from "../service/tutor-admin.service";
-import {TutorCreateRequest} from "../../../pana-tutor-lib/model/tutor/tutor-admin.interface";
+import {TutorAssignRequest} from "../../../pana-tutor-lib/model/tutor/tutor-admin.interface";
 const asyncHandler = require('express-async-handler');
 const router = express.Router();
 
@@ -30,7 +30,7 @@ export class TutorAdminRouter {
   }));
 
   assignCourseTutor = router.post('/course/tutor/assign', asyncHandler( async (req, res, next) => {
-    const reqObj = req.body as TutorCreateRequest;
+    const reqObj = req.body as TutorAssignRequest;
     console.log("## assignCourseTutor req:: ", reqObj);
     if( !_.isNumber(reqObj.user_id) || !_.isNumber(reqObj.course_id) ) {
       throw new AppError(400, ErrorMessage.INVALID_PARAM, ErrorCode.INVALID_PARAM, null);

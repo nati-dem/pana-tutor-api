@@ -25,7 +25,19 @@ export class SearchRouter {
     if( _.isEmpty(q) || q.length < 4  ){
       throw new AppError(400, ErrorMessage.INVALID_PARAM, ErrorCode.INVALID_PARAM_SEARCH, null);
     }
-    const resp = await this.userService.findUsersFromDB(q);
+    let resp = await this.userService.findUsersFromDB(q);
+
+    // Temp code to search user from WP - should be removed
+    if(!resp || _.isEmpty(resp) || resp.length === 0){
+      const entity = 'users'
+      const entityUrl = this.getEntityUrl(entity);
+      const wpResp = await this.baseService.search(entityUrl, q);
+      resp = this.mapFieldsFromArray(wpResp, entity);
+      for(const d of wpResp.data){
+        this.userService.saveUser(d);
+      }
+    }
+
     res.status(200).end(JSON.stringify(resp));
   }));
 

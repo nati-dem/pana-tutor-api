@@ -1,6 +1,6 @@
 import { TutorAdminDAO } from "../dao/tutor-admin.dao";
 import { Inject } from "typescript-ioc";
-import {TutorCreateRequest} from "../../../pana-tutor-lib/model/tutor/tutor-admin.interface";
+import {TutorAssignRequest} from "../../../pana-tutor-lib/model/tutor/tutor-admin.interface";
 import {BaseService} from './base.service';
 
 export class TutorAdminService extends BaseService {
@@ -12,7 +12,7 @@ export class TutorAdminService extends BaseService {
     return await this.tutorAdminDAO.getAllTutorsInCourse(courseId, usertatus);
   }
 
-  assignCourseTutor = async (req: TutorCreateRequest) => {
+  assignCourseTutor = async (req: TutorAssignRequest) => {
     let result = await this.tutorAdminDAO.findCourseTutor(req.user_id, req.course_id)
     if (result.length === 0) {
       result = await this.tutorAdminDAO.assignCourseTutor(req);

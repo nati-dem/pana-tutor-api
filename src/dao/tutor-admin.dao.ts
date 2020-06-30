@@ -1,5 +1,5 @@
 import { BaseDAO } from "./base.dao";
-import { TutorCreateRequest } from "../../../pana-tutor-lib/model/tutor/tutor-admin.interface";
+import { TutorAssignRequest } from "../../../pana-tutor-lib/model/tutor/tutor-admin.interface";
 
 export class TutorAdminDAO extends BaseDAO {
 
@@ -21,7 +21,7 @@ export class TutorAdminDAO extends BaseDAO {
     return this.find(caller, query, params);
   };
 
-  assignCourseTutor = async (req: TutorCreateRequest) => {
+  assignCourseTutor = async (req: TutorAssignRequest) => {
     const query = `INSERT INTO instructor_course ( user_id, course_id)
       VALUES (?, ?) `;
     const params = [req.user_id, req.course_id ];
