@@ -203,7 +203,7 @@ CREATE TABLE panalearncom_tutor.instructor_profile (
     work_exp VARCHAR(128) NULL,
     avg_price_per_hr VARCHAR(10) NULL,
     availablity VARCHAR(255) NULL,
-    FOREIGN KEY (user_id) REFERENCES panalearncom_tutor.users(id)
+    FOREIGN KEY (user_id) REFERENCES panalearncom_tutor.users(user_id)
 );
 
 CREATE TABLE panalearncom_tutor.instructor_course (
@@ -212,7 +212,7 @@ CREATE TABLE panalearncom_tutor.instructor_course (
     course_id INT UNSIGNED NOT NULL,
     course_cat INT UNSIGNED NULL,
     price_per_hr VARCHAR(10) NULL,
-    FOREIGN KEY (user_id) REFERENCES panalearncom_tutor.users(id)
+    FOREIGN KEY (user_id) REFERENCES panalearncom_tutor.users(user_id)
 );
 
 /*
