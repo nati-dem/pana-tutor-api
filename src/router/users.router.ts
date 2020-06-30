@@ -2,17 +2,18 @@ import express from 'express';
 import _ from 'lodash';
 import {AppError} from '../common/app-error';
 import {UserService} from "../service/user.service";
-import {isSuccessHttpCode} from "../../../pana-tutor-lib/util/common-helper";
 import {ErrorCode, ErrorMessage} from "../../../pana-tutor-lib/enum/constants";
-import {UserSignupRequest} from "../../../pana-tutor-lib/model/user/user-auth.interface";
+import {UserSignupRequest, ChangePasswordRequest} from "../../../pana-tutor-lib/model/user/user-auth.interface";
 import { Inject } from 'typescript-ioc';
+import { isSuccessHttpCode } from '../../../pana-tutor-lib/util/common-helper';
+
 const asyncHandler = require('express-async-handler');
 const router = express.Router();
 
 export class UserRouter {
 
   @Inject
-  private userService: UserService
+  private userService: UserService;
 
   index = router.get('/', (req, res, next) => {
     res.send( "Hello world!" );
@@ -38,9 +39,24 @@ export class UserRouter {
     const mappedReq = this.mapUpdateProfileRequest(reqObj);
     console.log("profileUpdate API call:", mappedReq);
     // only update WP if password / name changed
-    await this.userService.updateUserInWP(userId,reqObj);
-    this.userService.updateUserInDB(userId,reqObj);
+    await this.userService.updateUserInWP(userId,mappedReq);
+    this.userService.updateUserInDB(userId,mappedReq);
     res.status(200).end(JSON.stringify(reqObj));
+  }));
+
+  changePassword = router.post('/change-password', asyncHandler ( async (req, res, next) => {
+    const userId = global.userId;
+    const reqObj = req.body as ChangePasswordRequest;
+    console.log("ChangePasswordRequest API call:", reqObj.email);
+    if (_.isEmpty(reqObj.email) || _.isEmpty(reqObj.password) || _.isEmpty(reqObj.new_password) ) {
+      throw new AppError(400,ErrorMessage.INVALID_PARAM,ErrorCode.INVALID_PARAM,null);
+    }
+    const resp = await this.userService.changePassword(userId, reqObj);
+    if(!isSuccessHttpCode(resp.status)) {
+      throw new AppError(resp.status, resp.message, ErrorCode.PASSWORD_CHANGE_ERROR, JSON.stringify(resp.data));
+    }
+    const mapped = this.mapUserWpUserRespomse(resp);
+    res.status(200).end(JSON.stringify(mapped));
   }));
 
   mapUpdateProfileRequest(reqObj) {
@@ -58,7 +74,7 @@ export class UserRouter {
       } as UserSignupRequest;
   }
 
-  mapUserWpUserFields(resp) {
+  mapUserWpUserRespomse(resp) {
     return _.pick(resp.data, ["id", "username", "name", "first_name", "last_name", "email", "roles", "meta"]);
   }
 

@@ -1,12 +1,14 @@
 import {IntegratorService} from "../provider/integrator.service";
 import {Inject} from "typescript-ioc";
-import {UserLoginRequest, UserSignupRequest} from "../../../pana-tutor-lib/model/user/user-auth.interface";
+import {UserLoginRequest, UserSignupRequest, ChangePasswordRequest} from "../../../pana-tutor-lib/model/user/user-auth.interface";
 import {AppConstant} from '../config/constants';
 import { UserDAO } from "../dao/user.dao";
 import {ErrorCode, ErrorMessage} from "../../../pana-tutor-lib/enum/constants";
 import {isSuccessHttpCode} from "../../../pana-tutor-lib/util/common-helper";
 import {AppError} from '../common/app-error';
 import _ from 'lodash';
+import {HttpResponse} from "../../../pana-tutor-lib/model/api-response.interface";
+import {AuthService} from "./auth.service";
 
 export class UserService {
 
@@ -14,6 +16,8 @@ export class UserService {
     private apiExecuter: IntegratorService;
     @Inject
     private userDAO: UserDAO;
+    @Inject
+    private authService: AuthService;
 
     private getUserById = async (id: number) => {
         const profileUrl = `${AppConstant.USER_URL}/${id}`
@@ -31,7 +35,22 @@ export class UserService {
             if(!isSuccessHttpCode(resp.status)) {
               throw new AppError(resp.status, resp.message, ErrorCode.PROFILE_UPDATE_ERROR, JSON.stringify(resp.data));
             }
+        }
+    }
+
+    changePassword = async (userId, reqObj: ChangePasswordRequest) => {
+        const loginReq = {
+            username: reqObj.email,
+            password: reqObj.password
           }
+          const response: HttpResponse = await this.authService.authenticate(loginReq);
+          if(!isSuccessHttpCode(response.status)) {
+            throw new AppError(response.status, ErrorMessage.WRONG_PASSWORD, ErrorCode.WRONG_PASSWORD, JSON.stringify(response.data));
+          }
+          const mappedReq = {
+            password:reqObj.new_password
+          } as UserSignupRequest;
+        return await this.updateUserProfile(userId, mappedReq);
     }
 
     updateUserInDB = async (id: number, reqObj: UserSignupRequest) => {

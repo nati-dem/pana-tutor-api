@@ -41,35 +41,37 @@ export class UserDAO extends BaseDAO {
     const params: any[] = [];
     let fields = "";
     if(req.name && !_.isEmpty(req.name)){
-      fields += ' name=?, '
+      fields += ' name=?,'
       params.push(req.name)
     }
     if(req.nickname && !_.isEmpty(req.nickname)){
-      fields += 'nickname=?, '
+      fields += 'nickname=?,'
       params.push(req.nickname)
     }
     if(req.phone && !_.isEmpty(req.phone)){
-      fields += 'phone=?, '
+      fields += 'phone=?,'
       params.push(req.phone)
     }
     if(req.address && !_.isEmpty(req.address)){
-      fields += 'address=?, '
+      fields += 'address=?,'
       params.push(req.address)
     }
     if(req.country && !_.isEmpty(req.country)){
-      fields += 'country=?, '
+      fields += 'country=?,'
       params.push(req.country)
     }
     if(req.bio && !_.isEmpty(req.bio)){
-      fields += 'bio=?, '
+      fields += 'bio=?,'
       params.push(req.bio)
     }
     if(req.time_zone && !_.isEmpty(req.time_zone)){
-      fields += 'time_zone=? ';
+      fields += 'time_zone=?,';
       params.push(req.time_zone)
     }
     if(params.length !== 0) {
-      const query = `UPDATE users set ${fields} WHERE user_id = ? `;
+      fields = fields.substring(0, fields.length - 1);
+      const query = `UPDATE users set ${fields}  WHERE user_id = ? `;
+      console.log('updateProfile d query:', query)
       params.push(userId);
       const caller = "updateUser";
       return this.update(caller, query, params, userId);
