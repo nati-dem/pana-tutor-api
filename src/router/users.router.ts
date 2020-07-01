@@ -6,7 +6,7 @@ import {ErrorCode, ErrorMessage} from "../../../pana-tutor-lib/enum/constants";
 import {UserSignupRequest, ChangePasswordRequest} from "../../../pana-tutor-lib/model/user/user-auth.interface";
 import { Inject } from 'typescript-ioc';
 import { isSuccessHttpCode } from '../../../pana-tutor-lib/util/common-helper';
-
+const escape = require('escape-html');
 const asyncHandler = require('express-async-handler');
 const router = express.Router();
 
@@ -61,16 +61,16 @@ export class UserRouter {
 
   mapUpdateProfileRequest(reqObj) {
     return {
-      ...(reqObj.name ? {name:reqObj.name} : {} ),
-      ...(reqObj.nickname ? {nickname:reqObj.nickname} : {} ),
-      ...(reqObj.first_name ? {first_name:reqObj.first_name} : {} ),
-      ...(reqObj.password ? {password:reqObj.password} : {} ),
-      ...(reqObj.meta ? {meta:reqObj.meta} : {} ),
-      ...(reqObj.phone ? {phone:reqObj.phone} : {} ),
-      ...(reqObj.address ? {address:reqObj.address} : {} ),
-      ...(reqObj.country ? {country:reqObj.country} : {} ),
-      ...(reqObj.bio ? {bio:reqObj.bio} : {} ),
-      ...(reqObj.time_zone ? {time_zone:reqObj.time_zone} : {} ),
+      ...(reqObj.name ? {name: escape(reqObj.name) } : {} ),
+      ...(reqObj.nickname ? {nickname: escape(reqObj.nickname) } : {} ),
+      // ...(reqObj.first_name ? {first_name: escape(reqObj.first_name) } : {} ),
+      // ...(reqObj.password ? {password:reqObj.password} : {} ),
+      // ...(reqObj.meta ? {meta: reqObj.meta} : {} ),
+      ...(reqObj.phone ? {phone: escape(reqObj.phone)} : {} ),
+      ...(reqObj.address ? {address: escape(reqObj.address)} : {} ),
+      ...(reqObj.country ? {country: escape(reqObj.country)} : {} ),
+      ...(reqObj.bio ? {bio: escape(reqObj.bio)} : {} ),
+      ...(reqObj.time_zone ? {time_zone: escape(reqObj.time_zone)} : {} ),
       } as UserSignupRequest;
   }
 

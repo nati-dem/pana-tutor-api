@@ -8,6 +8,7 @@ import {BoardPostCreateRequest, BoardPostStatus, BoardPostType} from "../../../p
 import { GroupStatus, GroupMemberStatus } from "../../../pana-tutor-lib/enum/tutor.enum";
 const asyncHandler = require('express-async-handler');
 const router = express.Router();
+const escape = require('escape-html');
 
 export class TutorPostRouter {
 
@@ -37,17 +38,32 @@ export class TutorPostRouter {
         || !(reqObj.post_type in BoardPostType) || _.isEmpty(reqObj.post_title) || _.isEmpty(reqObj.post_content) ) {
       throw new AppError(400, ErrorMessage.INVALID_PARAM, ErrorCode.INVALID_PARAM, null);
     }
-    reqObj.created_by = global.userId;
+    const mappedReqObj = this.transformRequest(reqObj);
 
     // TODO - only group instructor/admin can create/edit post
     let resp = {};
     if(reqObj.id) {
-      resp = await this.postService.updateGroupPost(reqObj);
+      resp = await this.postService.updateGroupPost(mappedReqObj);
     } else {
-      resp = await this.postService.createGroupPost(reqObj);
+      resp = await this.postService.createGroupPost(mappedReqObj);
     }
     res.status(200).end(JSON.stringify(resp));
   }));
+
+  transformRequest(reqObj: BoardPostCreateRequest){
+    return {
+      id: reqObj.id ? reqObj.id: undefined,
+      course_id: escape(reqObj.course_id),
+      post_title: escape(reqObj.post_title),
+      post_content: escape(reqObj.post_content),
+      post_type: escape(reqObj.post_type),
+      status: escape(reqObj.status),
+      points: reqObj.points ? escape(reqObj.points) : 0,
+      due_date: reqObj.due_date ? escape(reqObj.due_date) : null,
+      group_ids: reqObj.group_ids,
+      created_by: global.userId
+    };
+  }
 
   deleteGroupPost = router.delete('/groups/:groupId/posts/:postId', asyncHandler( async (req, res, next) => {
     const courseId = parseInt(req.query.courseId, 10);

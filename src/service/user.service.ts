@@ -4,6 +4,7 @@ import {UserLoginRequest, UserSignupRequest, ChangePasswordRequest} from "../../
 import {AppConstant} from '../config/constants';
 import { UserDAO } from "../dao/user.dao";
 import {ErrorCode, ErrorMessage} from "../../../pana-tutor-lib/enum/constants";
+import {UserRole} from "../../../pana-tutor-lib/enum/user.enum";
 import {isSuccessHttpCode} from "../../../pana-tutor-lib/util/common-helper";
 import {AppError} from '../common/app-error';
 import _ from 'lodash';
@@ -123,12 +124,14 @@ export class UserService {
         return r;
     }
 
-    saveUser = async (req: UserSignupRequest) => {
-        console.log('saving User in local DB...')
+    saveWpUserResonse = async (req: UserSignupRequest) => {
+        console.log('saving User in local DB From WP response...')
         let result;
         if(req.id){
             result = await this.userDAO.getUserById(req.id);
             if(result.length === 0){
+                req.phone = req.meta && req.meta.phone_number && req.meta.phone_number.length > 0 ? req.meta.phone_number[0] : '';
+                req.primary_role = req.roles && req.roles.length > 0 ? req.roles[0] : UserRole.SUBSCRIBER;
                 result = await this.userDAO.saveUser(req);
             }
         }

@@ -8,6 +8,7 @@ import {HttpResponse} from "../../../pana-tutor-lib/model/api-response.interface
 import {isSuccessHttpCode} from "../../../pana-tutor-lib/util/common-helper";
 import {ErrorCode, ErrorMessage} from "../../../pana-tutor-lib/enum/constants";
 import { Inject } from 'typescript-ioc';
+import _ from 'lodash';
 const asyncHandler = require('express-async-handler');
 const router = express.Router();
 
@@ -51,10 +52,14 @@ export class AuthRouter {
       throw new AppError(response.status, response.message, ErrorCode.REGISTER_ERROR, JSON.stringify(response.data));
     }
     // save in local DB
-    this.userService.saveUser(response.data);
-
-    res.status(200).end(JSON.stringify(response.data));
+    this.userService.saveWpUserResonse(response.data);
+    const mapped = this.mapUserWpUserRespomse(response.data);
+    res.status(200).end(JSON.stringify(mapped));
   }));
+
+  mapUserWpUserRespomse(resp) {
+    return _.pick(resp.data, ["id", "username", "name", "first_name", "last_name", "email", "roles", "meta", "registered_date"]);
+  }
 
   tokenValidationRouter = router.post('/token-validate', asyncHandler ( async (req, res, next) => {
     const token = req.headers.authorization ? req.headers.authorization.split(" ")[1] : '';

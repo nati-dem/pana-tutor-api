@@ -34,7 +34,7 @@ export class SearchRouter {
       const wpResp = await this.baseService.search(entityUrl, q);
       resp = this.mapFieldsFromArray(wpResp, entity);
       for(const d of wpResp.data){
-        this.userService.saveUser(d);
+        this.userService.saveWpUserResonse(d);
       }
     }
 
@@ -59,7 +59,7 @@ export class SearchRouter {
     // TODO - Remove... TEMP code to save users in local DB
     if(entity === EntityType.users && resp.data.length > 0) {
       for(const d of resp.data){
-        this.userService.saveUser(d);
+        this.userService.saveWpUserResonse(d);
       }
     }
 

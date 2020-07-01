@@ -189,6 +189,7 @@ CREATE TABLE panalearncom_tutor.users (
     status ENUM('active', 'pending', 'disabled', 'locked', 'deleted') NOT NULL DEFAULT 'active',
     avatar VARCHAR(128) NULL,
     time_zone VARCHAR(10) NULL,
+    email_activated ENUM('1', '0') DEFAULT '0',
     create_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

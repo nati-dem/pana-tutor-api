@@ -28,11 +28,9 @@ export class UserDAO extends BaseDAO {
   };
 
   saveUser = async (req: UserSignupRequest) => {
-    const phone = req.meta && req.meta.phone_number && req.meta.phone_number.length > 0 ? req.meta.phone_number[0] : '';
-    const role = req.roles && req.roles.length > 0 ? req.roles[0] : 'subscriber';
     const query = `INSERT INTO users (user_id, name, email, phone, address, user_role)
       VALUES (?, ?, ?, ?, ?, ?) `;
-    const params = [req.id, req.name, req.email, phone, '', role];
+    const params = [req.id, req.name, req.email, req.phone, '', req.primary_role];
     const caller = "saveUser";
     return this.insert(caller, query, params);
   };
