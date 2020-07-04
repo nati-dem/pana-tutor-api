@@ -2,11 +2,11 @@ import axios from "axios";
 import {HttpResponse} from "../../../pana-tutor-lib/model/api-response.interface";
 import {handleApiError} from "../common/util";
 import { IntegrationSupport } from "./integration-support";
-import { WpIntegrationSupport } from "./wp-integration-support";
+import { Inject } from "typescript-ioc";
 
 export class IntegratorService {
 
-    // private appCache = AppCache.getInstance();
+    @Inject
     private integrationSupport: IntegrationSupport;
 
     doPost = async (requestObj: any, url: string, useAdminToken: boolean, token?:string) => {
@@ -56,7 +56,7 @@ export class IntegratorService {
     getHeaders = async (useAdminToken, token) => {
       let headers:any;
       if(useAdminToken) {
-        const adminToken = await this.getIntegrationSupport().generateServiceToken();
+        const adminToken = await this.integrationSupport.generateServiceToken();
         headers = { Authorization: `Bearer ${adminToken}` };
       } else if (token) {
         headers = { Authorization: `Bearer ${token}` };
@@ -64,13 +64,6 @@ export class IntegratorService {
       return headers;
     }
 
-    getIntegrationSupport(){
-      if(!this.integrationSupport){
-        console.log('getNEWIntegrationSupport() called')
-        this.integrationSupport = new WpIntegrationSupport();
-      }
-      return this.integrationSupport;
-    }
     /*
     generateAppToken = async () => {
       let adminToken = this.appCache.get( AppConstant.ADMIN_TOKEN_KEY );
