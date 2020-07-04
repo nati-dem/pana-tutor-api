@@ -6,10 +6,10 @@ import {AppConstant} from '../config/constants';
 import {isSuccessHttpCode} from "../../../pana-tutor-lib/util/common-helper";
 import axios from "axios";
 import {handleApiError} from "../common/util";
-import {IntegrationSupport} from "./integration-support";
+import {AbstractIntegrationSupport} from "./abstract-integration-support";
 const jwtDecode = require('jwt-decode');
 
-export class WpIntegrationSupport implements IntegrationSupport{
+export class WpIntegrationSupport implements AbstractIntegrationSupport {
 
     private appCache = AppCache.getInstance();
 

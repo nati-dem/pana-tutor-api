@@ -1,8 +1,8 @@
 import { Container } from "typescript-ioc";
 import { WpIntegrationSupport } from "./wp-integration-support";
 
-export abstract class IntegrationSupport {
+export abstract class AbstractIntegrationSupport {
     abstract generateServiceToken (): Promise<string>;
 }
 
-Container.bind(IntegrationSupport).to(WpIntegrationSupport);
+Container.bind(AbstractIntegrationSupport).to(WpIntegrationSupport);

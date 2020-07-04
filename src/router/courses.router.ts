@@ -14,6 +14,7 @@ const asyncHandler = require("express-async-handler");
 const router = express.Router();
 
 export class CoursesRouter {
+
   @Inject
   private courseService: CourseService;
 

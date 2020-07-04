@@ -1,13 +1,13 @@
 import axios from "axios";
 import {HttpResponse} from "../../../pana-tutor-lib/model/api-response.interface";
 import {handleApiError} from "../common/util";
-import { IntegrationSupport } from "./integration-support";
+import { AbstractIntegrationSupport } from "./abstract-integration-support";
 import { Inject } from "typescript-ioc";
 
 export class IntegratorService {
 
     @Inject
-    private integrationSupport: IntegrationSupport;
+    private integrationSupport: AbstractIntegrationSupport;
 
     doPost = async (requestObj: any, url: string, useAdminToken: boolean, token?:string) => {
       console.log('calling api:: ', url)

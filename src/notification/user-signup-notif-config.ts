@@ -1,13 +1,13 @@
-import { MailOptions } from "../mail-config/mail-options";
+import { NotificationOptions } from "./notification-options";
 
-export class UserSignupMailConfig implements MailOptions {
+export class UserSignupNotifConfig implements NotificationOptions {
 
     from: string;
-    to?: string | undefined;
+    to: string;
     subject: string;
     html: string;
 
-    constructor(user, options: MailOptions) {
+    constructor(user, options: NotificationOptions) {
         this.to = user.email;
         this.from = options.from;
         this.subject = options.subject;
@@ -15,4 +15,3 @@ export class UserSignupMailConfig implements MailOptions {
     }
 
 }
-
