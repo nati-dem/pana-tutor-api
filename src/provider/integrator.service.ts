@@ -1,16 +1,13 @@
 import axios from "axios";
 import {HttpResponse} from "../../../pana-tutor-lib/model/api-response.interface";
 import {handleApiError} from "../common/util";
-import {ErrorCode, ErrorMessage} from "../../../pana-tutor-lib/enum/constants";
-import {AppError} from '../common/app-error';
-import {AppCache} from '../config/cache-config';
-import {AppConstant} from '../config/constants';
-import {isSuccessHttpCode} from "../../../pana-tutor-lib/util/common-helper";
-const jwtDecode = require('jwt-decode');
+import { IntegrationSupport } from "./integration-support";
+import { WpIntegrationSupport } from "./wp-integration-support";
 
 export class IntegratorService {
 
-    private appCache = AppCache.getInstance();
+    // private appCache = AppCache.getInstance();
+    private integrationSupport: IntegrationSupport;
 
     doPost = async (requestObj: any, url: string, useAdminToken: boolean, token?:string) => {
       console.log('calling api:: ', url)
@@ -59,7 +56,7 @@ export class IntegratorService {
     getHeaders = async (useAdminToken, token) => {
       let headers:any;
       if(useAdminToken) {
-        const adminToken = await this.generateAppToken();
+        const adminToken = await this.getIntegrationSupport().generateServiceToken();
         headers = { Authorization: `Bearer ${adminToken}` };
       } else if (token) {
         headers = { Authorization: `Bearer ${token}` };
@@ -67,6 +64,14 @@ export class IntegratorService {
       return headers;
     }
 
+    getIntegrationSupport(){
+      if(!this.integrationSupport){
+        console.log('getNEWIntegrationSupport() called')
+        this.integrationSupport = new WpIntegrationSupport();
+      }
+      return this.integrationSupport;
+    }
+    /*
     generateAppToken = async () => {
       let adminToken = this.appCache.get( AppConstant.ADMIN_TOKEN_KEY );
       const currentTime = new Date().getTime();
@@ -90,6 +95,6 @@ export class IntegratorService {
       // save in cache
       this.appCache.set( AppConstant.ADMIN_TOKEN_KEY, adminToken, 2 * 86400 ); // ttl in sec ~ 2 days
       return adminToken;
-  }
+  } */
 
 }

@@ -3,6 +3,8 @@ import { rotatingAccessLogStream } from "./logger-config";
 import { AppConstant } from "./constants";
 import axios from "axios";
 import { DS } from "../dao/data-source";
+import { TransporterFactory } from "../mail-config/transporter-factory";
+import { Inject } from "typescript-ioc";
 const morgan = require("morgan");
 const compression = require("compression");
 const helmet = require("helmet");
@@ -11,6 +13,8 @@ const cors = require('cors');
 export class ExpressConfig {
 
   protected _app: express.Application;
+  @Inject
+  transporterFactory: TransporterFactory
 
   constructor() {
   }
@@ -26,6 +30,7 @@ export class ExpressConfig {
     this.configureResponseHeaders();
     this.configureAxios();
     DS.initConPool();
+    this.configureMailTransporter();
   }
 
   private configureLogger() {
@@ -46,6 +51,10 @@ export class ExpressConfig {
     axios.defaults.baseURL = AppConstant.BASE_WP_URL;
     // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
     axios.defaults.headers.post["Content-Type"] = "application/json";
+  }
+
+  private configureMailTransporter(){
+    this.transporterFactory.initTransporter("gmail");
   }
 
   get app() {

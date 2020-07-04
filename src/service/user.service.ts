@@ -65,6 +65,7 @@ export class UserService {
             result = await this.getUserById(id);
             console.log('user resp from wp::',result)
             if(result.data && result.data.id){
+                result.data.primary_role = result.data.roles[0];
                 this.userDAO.saveUser(result.data); // save in db async
                 result = this.mapWpUserResponse(result);
             } else {
