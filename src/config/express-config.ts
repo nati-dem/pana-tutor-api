@@ -54,7 +54,7 @@ export class ExpressConfig {
   }
 
   private configureMailTransporter(){
-    this.transporterFactory.initTransporter("gmail");
+    this.transporterFactory.initTransporter("panalearn");
   }
 
   get app() {

@@ -1,4 +1,4 @@
 
 export interface ITransporter {
-    create();
+    create(email, pass);
 }

@@ -1,6 +1,6 @@
 
 export const UserSignupMailOptions: NotificationOptions = {
-    from: "panalearn@gmail.com",
+    from: "info@panalearn.com",
     subject: "Sending Email using Node.js",
     html: "<h1>Welcome ${username} </h1><p>That was easy!</p>"
 }

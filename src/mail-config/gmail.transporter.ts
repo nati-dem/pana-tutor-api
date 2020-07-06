@@ -4,12 +4,12 @@ const nodemailer = require('nodemailer');
 
 export class GmailTransporter implements ITransporter {
 
-    create(){
+    create(email, passw){
         return nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: process.env.GMAIL,
-                pass: process.env.GMAIL_PASS
+                user: email,
+                pass: passw
             }
         });
     }

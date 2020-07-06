@@ -13,7 +13,7 @@ export class TestSubject extends AbstractSubject {
 
     public  testMethod(): void {
 
-      const testUser = { email: "natwinet@gmail.com", name: 'nate' }
+      const testUser = { email: "nati@panalearn.com", name: 'nate' }
       const userSignupMail = new UserSignupNotifConfig(testUser, UserSignupMailOptions);
 
        this.notifyAllObservers(userSignupMail);
