@@ -43,14 +43,16 @@ export class UserService {
         const loginReq = {
             username: reqObj.email,
             password: reqObj.password
-          }
-          const response: HttpResponse = await this.authService.authenticate(loginReq);
-          if(!isSuccessHttpCode(response.status)) {
+        }
+        console.log("@authenticate for ChangePasswordRequest API call");
+        const response: HttpResponse = await this.authService.authenticate(loginReq);
+        if(!isSuccessHttpCode(response.status)) {
             throw new AppError(response.status, ErrorMessage.WRONG_PASSWORD, ErrorCode.WRONG_PASSWORD, JSON.stringify(response.data));
-          }
-          const mappedReq = {
+        }
+        const mappedReq = {
             password:reqObj.new_password
-          } as UserSignupRequest;
+        } as UserSignupRequest;
+        console.log("@updateUserProfile for ChangePasswordRequest API call");
         return await this.updateUserProfile(userId, mappedReq);
     }
 
@@ -137,6 +139,10 @@ export class UserService {
             }
         }
         return result;
+    }
+
+    updateAvatar = async (id: number, fileName: string) => {
+        return await this.userDAO.updateAvatar(id, fileName);
     }
 
 }

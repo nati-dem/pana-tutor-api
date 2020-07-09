@@ -7,6 +7,7 @@ import {isSuccessHttpCode} from "../../../pana-tutor-lib/util/common-helper";
 import axios from "axios";
 import {handleApiError} from "../common/util";
 import {AbstractIntegrationSupport} from "./abstract-integration-support";
+import _ from 'lodash';
 const jwtDecode = require('jwt-decode');
 
 export class WpIntegrationSupport implements AbstractIntegrationSupport {
@@ -15,14 +16,14 @@ export class WpIntegrationSupport implements AbstractIntegrationSupport {
 
     generateServiceToken = async (): Promise<string> => {
         let adminToken = this.appCache.get( AppConstant.ADMIN_TOKEN_KEY );
-        const currentTime = new Date().getTime();
-        let tokenExpTime = -1;
+        const now = Date.now();
+        let tokenExpTime = Infinity;
         if ( adminToken !== undefined ){
             const decoded = jwtDecode(adminToken);
-            tokenExpTime = decoded.exp;
+            tokenExpTime = decoded.exp * 1000;
         }
-        console.log('adminToken in cache: ', adminToken, ' , ##currentTime::', currentTime, ' , ##tokenExpTime::', tokenExpTime);
-        if ( !adminToken || adminToken === undefined || currentTime < tokenExpTime){
+        console.log('adminToken in cache: ', !_.isEmpty(adminToken), ' , ##currentTime::', now, ' , ##tokenExpTime::', tokenExpTime);
+        if ( !adminToken || adminToken === undefined || now >= tokenExpTime ){
             console.log('#adminToken not in cache, generating token..')
             const tokenResp: HttpResponse = await this.doLoginPost({
                 username: process.env.ADMIN_USER,

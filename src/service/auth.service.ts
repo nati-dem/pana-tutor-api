@@ -13,6 +13,7 @@ export class AuthService {
 
     @Inject
     private apiExecuter: IntegratorService;
+    private appCache = AppCache.getInstance();
 
     authenticate = async (loginRequest: UserLoginRequest) => {
         return await this.apiExecuter.doPost(loginRequest, AppConstant.LOGIN_URL, false);
@@ -22,8 +23,23 @@ export class AuthService {
         return await this.apiExecuter.doPost(signupRequest, AppConstant.REGISTER_URL, true);
     }
 
-    validateToken = async (token: string) : Promise<HttpResponse> => {
-        return await this.apiExecuter.doPost({}, AppConstant.TOKEN_VALIDATION_URL, false, token);
+    saveAuthTokenInCache = async (data) => {
+        const userId = this.getUserIdFromToken(data.token);
+        console.log('@saveAuthTokenInCache... userId:', userId)
+        this.appCache.set( AppConstant.USER_TOKEN_KEY+'_'+userId, data.token, 2 * 86400 ); // ttl in sec ~ 2 days
+    }
+
+    isTokenValid = async (token: string, userId) : Promise<boolean> => {
+        const tokenInCache = this.appCache.get( AppConstant.USER_TOKEN_KEY+'_'+userId );
+        if(tokenInCache && token === tokenInCache) {
+            return this.isTokenUnexpired(tokenInCache);
+        } else {
+            const tokenResp= await this.apiExecuter.doPost({}, AppConstant.TOKEN_VALIDATION_URL, false, token);
+            if (isSuccessHttpCode(tokenResp.status)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     getUserIdFromToken(token){
@@ -31,6 +47,18 @@ export class AuthService {
         const decoded = jwtDecode(token);
         console.log('user id from header token: ', decoded.data.user.id);
         return decoded.data.user.id;
-      }
+    }
+
+    isTokenUnexpired(token){
+        const decoded = jwtDecode(token);
+        const now = Date.now();
+        const tokenExpTime = decoded.exp * 1000;
+        console.log('@isTokenUnexpired...currentTime:', now, '&tokenExpTime::', tokenExpTime)
+        if(tokenExpTime > now){
+            console.log('@isTokenUnexpired found valid in cache')
+            return true;
+        }
+        return false;
+    }
 
 }

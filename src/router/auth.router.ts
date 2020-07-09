@@ -34,7 +34,7 @@ export class AuthRouter {
     if(!isSuccessHttpCode(response.status)) {
       throw new AppError(response.status, response.message, ErrorCode.LOGIN_ERROR, JSON.stringify(response.data));
     }
-
+    this.authService.saveAuthTokenInCache(response.data);
     res.status(200).end(JSON.stringify(response.data));
   }));
 
@@ -63,12 +63,14 @@ export class AuthRouter {
 
   tokenValidationRouter = router.post('/token-validate', asyncHandler ( async (req, res, next) => {
     const token = req.headers.authorization ? req.headers.authorization.split(" ")[1] : '';
+    console.log('tokenValidation API call...')
     if(!isEmpty(token)) {
-      const resp = await this.authService.validateToken(token);
-      if(!isSuccessHttpCode(resp.status)) {
-        throw new AppError(resp.status, resp.message, ErrorCode.INVALID_TOKEN, JSON.stringify(resp.data));
+      const userId = await this.authService.getUserIdFromToken(token);
+      const isTokenValid = await this.authService.isTokenValid(token, userId);
+      if(!isTokenValid) {
+        throw new AppError(401, ErrorMessage.INVALID_AUTH_TOKEN, ErrorCode.INVALID_TOKEN, null);
       }
-      res.status(200).end(JSON.stringify(resp.data));
+      res.status(200).end();
     } else {
       throw new AppError(401, ErrorMessage.UNAUTHORIZED, ErrorCode.INVALID_TOKEN, null);
     }

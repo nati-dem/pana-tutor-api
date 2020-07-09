@@ -2,10 +2,13 @@ import express from 'express';
 import _ from 'lodash';
 import {AppError} from '../common/app-error';
 import {UserService} from "../service/user.service";
+import {uploadAvatar} from "../service/upload.service";
 import {ErrorCode, ErrorMessage} from "../../../pana-tutor-lib/enum/constants";
 import {UserSignupRequest, ChangePasswordRequest} from "../../../pana-tutor-lib/model/user/user-auth.interface";
 import { Inject } from 'typescript-ioc';
 import { isSuccessHttpCode } from '../../../pana-tutor-lib/util/common-helper';
+import { TestSubject } from '../notification/test-subject';
+import {mapUpdateProfileRequest, mapUserWpUserResponse} from '../common/user-mapper';
 const escape = require('escape-html');
 const asyncHandler = require('express-async-handler');
 const router = express.Router();
@@ -14,6 +17,8 @@ export class UserRouter {
 
   @Inject
   private userService: UserService;
+  @Inject
+  private testSubject: TestSubject;
 
   index = router.get('/', (req, res, next) => {
     res.send( "Hello world!" );
@@ -36,7 +41,7 @@ export class UserRouter {
     const userId = global.userId;
     const reqObj = req.body as UserSignupRequest;
     // TODO - add request payload validation
-    const mappedReq = this.mapUpdateProfileRequest(reqObj);
+    const mappedReq = mapUpdateProfileRequest(reqObj);
     console.log("profileUpdate API call:", mappedReq);
     // only update WP if password / name changed
     await this.userService.updateUserInWP(userId,mappedReq);
@@ -44,39 +49,39 @@ export class UserRouter {
     res.status(200).end(JSON.stringify(reqObj));
   }));
 
+  avatarUpdate = router.post('/avatar', uploadAvatar.single('avatar'), (req, res, next) => {
+    // req.file is the `avatar` file, req.body will hold the text fields, if there were any
+    // @ts-ignore
+    const file = req.file;
+    if (!file) {
+      console.log("avatarUpdate API call - No file is available: ", file);
+      throw new AppError(400, ErrorMessage.INVALID_FILE, ErrorCode.INVALID_FILE, null);
+    } else {
+      console.log('File upload success:', file);
+      const userId = global.userId;
+      this.userService.updateAvatar(userId, file.filename)
+      // this.testSubject.testMethod();
+      return res.send({
+        success: true
+      })
+    }
+  })
+
   changePassword = router.post('/change-password', asyncHandler ( async (req, res, next) => {
     const userId = global.userId;
     const reqObj = req.body as ChangePasswordRequest;
     console.log("ChangePasswordRequest API call:", reqObj.email);
-    if (_.isEmpty(reqObj.email) || _.isEmpty(reqObj.password) || _.isEmpty(reqObj.new_password) ) {
+    if (_.isEmpty(reqObj.email) || _.isEmpty(reqObj.password) || _.isEmpty(reqObj.new_password)
+          || (reqObj.password.trim() === reqObj.new_password.trim()) ) {
       throw new AppError(400,ErrorMessage.INVALID_PARAM,ErrorCode.INVALID_PARAM,null);
     }
     const resp = await this.userService.changePassword(userId, reqObj);
     if(!isSuccessHttpCode(resp.status)) {
       throw new AppError(resp.status, resp.message, ErrorCode.PASSWORD_CHANGE_ERROR, JSON.stringify(resp.data));
     }
-    const mapped = this.mapUserWpUserRespomse(resp);
+    const mapped = mapUserWpUserResponse(resp);
     res.status(200).end(JSON.stringify(mapped));
   }));
-
-  mapUpdateProfileRequest(reqObj) {
-    return {
-      ...(reqObj.name ? {name: escape(reqObj.name) } : {} ),
-      ...(reqObj.nickname ? {nickname: escape(reqObj.nickname) } : {} ),
-      // ...(reqObj.first_name ? {first_name: escape(reqObj.first_name) } : {} ),
-      // ...(reqObj.password ? {password:reqObj.password} : {} ),
-      // ...(reqObj.meta ? {meta: reqObj.meta} : {} ),
-      ...(reqObj.phone ? {phone: escape(reqObj.phone)} : {} ),
-      ...(reqObj.address ? {address: escape(reqObj.address)} : {} ),
-      ...(reqObj.country ? {country: escape(reqObj.country)} : {} ),
-      ...(reqObj.bio ? {bio: escape(reqObj.bio)} : {} ),
-      ...(reqObj.time_zone ? {time_zone: escape(reqObj.time_zone)} : {} ),
-      } as UserSignupRequest;
-  }
-
-  mapUserWpUserRespomse(resp) {
-    return _.pick(resp.data, ["id", "username", "name", "first_name", "last_name", "email", "roles", "meta"]);
-  }
 
   userAuthInfo = router.get('/auth-info', asyncHandler ( async (req, res, next) => {
     const userId = global.userId;

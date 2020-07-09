@@ -15,6 +15,7 @@ import { isSuccessHttpCode } from "../../../pana-tutor-lib/util/common-helper";
 import { ErrorCode,ErrorMessage } from "../../../pana-tutor-lib/enum/constants";
 import { isEmpty } from "lodash";
 import { ExpressConfig } from "./express-config";
+const jwtDecode = require('jwt-decode');
 
 export class RouteConfig extends ExpressConfig {
 
@@ -65,13 +66,15 @@ export class RouteConfig extends ExpressConfig {
     validateToken = async (req, res, next) => {
         // if ( req.path == '/') return next();
         const token = req.headers.authorization ? req.headers.authorization.split(" ")[1]: "";
-        console.log("#token validation:", token);
+        console.log("@token validation middleware:", token);
         if (!isEmpty(token)) {
-            const tokenResp = await this.authService.validateToken(token);
-            if (!isSuccessHttpCode(tokenResp.status)) {
+            const decoded = jwtDecode(token);
+            const userId = decoded.data.user.id;
+            const isTokenValid = await this.authService.isTokenValid(token, userId);
+            if (!isTokenValid) {
                 res.status(401).json({
                     code: ErrorCode.INVALID_AUTH,
-                    message: tokenResp.message,
+                    message: ErrorMessage.INVALID_AUTH_TOKEN,
                 });
             } else {
                 const userId = await this.authService.getUserIdFromToken(token);
@@ -96,9 +99,9 @@ export class RouteConfig extends ExpressConfig {
         this._app.use((err, req, res, next) => {
             err.httpStatus = err.httpStatus || 500;
             res.status(err.httpStatus).json({
-            code: err.code,
-            message: err.message,
-            detail: err.detail ? err.detail : "",
+                code: err.code,
+                message: err.message,
+                detail: err.detail ? err.detail : "",
             });
         });
     }

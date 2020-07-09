@@ -11,8 +11,9 @@ declare namespace NodeJS {
     DB_NAME:string,
     DB_DEBUG:string,
     DB_PREFIX:string,
-    GMAIL:string,
-    GMAIL_PASS:string
+    GMAIL: string,
+    GMAIL_PASS: string,
+    PUBLIC_UPLOAD_DIR: string
   }
   interface Global {
     userId:number

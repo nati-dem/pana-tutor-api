@@ -11,10 +11,10 @@ export class IntegratorService {
 
     doPost = async (requestObj: any, url: string, useAdminToken: boolean, token?:string) => {
       console.log('calling api:: ', url)
-      console.log('useAdminToken@API integrator:::', useAdminToken);
+      console.log('useAdminToken@API client:::', useAdminToken);
       const headers = await this.getHeaders(useAdminToken, token);
       let responseObj = {} as HttpResponse;
-
+      const start = new Date().getTime();
       await axios({
           method: 'post',
           url,
@@ -26,14 +26,14 @@ export class IntegratorService {
         }).catch(err =>
           responseObj = handleApiError(err)
         );
-
-        console.log('##doPost API resp:: ', responseObj);
+        const end = (new Date().getTime()) - start;
+        console.log('##doPost API resp:: ', responseObj, ' && timeTaken ms: ', end);
         return responseObj;
     }
 
     doGet = async (context: any, url: string, useAdminToken: boolean, token?:string) => {
       console.log('calling api:: ', url)
-      console.log('useAdminToken@API integrator:::', useAdminToken)
+      console.log('useAdminToken@API client:::', useAdminToken)
       const headers = await this.getHeaders(useAdminToken, token);
       let responseObj = {} as HttpResponse;
 

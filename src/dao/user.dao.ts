@@ -69,13 +69,20 @@ export class UserDAO extends BaseDAO {
     if(params.length !== 0) {
       fields = fields.substring(0, fields.length - 1);
       const query = `UPDATE users set ${fields}  WHERE user_id = ? `;
-      console.log('updateProfile d query:', query)
+      console.log('updateProfile db query:', query)
       params.push(userId);
       const caller = "updateUser";
       return this.update(caller, query, params, userId);
     } else {
       return {};
     }
+  };
+
+  updateAvatar = async (userId:number, fileName: string) => {
+    const query = `UPDATE users set avatar = ? WHERE user_id = ? `;
+    const params = [fileName, userId];
+    const caller = "updateAvatar";
+    return this.update(caller, query, params, userId);
   };
 
 }
