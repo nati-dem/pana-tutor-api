@@ -77,7 +77,6 @@ export class RouteConfig extends ExpressConfig {
                     message: ErrorMessage.INVALID_AUTH_TOKEN,
                 });
             } else {
-                const userId = await this.authService.getUserIdFromToken(token);
                 global.userId = userId;
                 next();
             }
