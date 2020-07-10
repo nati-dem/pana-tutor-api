@@ -34,7 +34,7 @@ export class AuthRouter {
     if(!isSuccessHttpCode(response.status)) {
       throw new AppError(response.status, response.message, ErrorCode.LOGIN_ERROR, JSON.stringify(response.data));
     }
-    this.authService.saveAuthTokenInCache(response.data);
+    this.authService.saveAuthResponseInCache(response.data);
     res.status(200).end(JSON.stringify(response.data));
   }));
 

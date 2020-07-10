@@ -13,7 +13,7 @@ const escape = require('escape-html');
 const asyncHandler = require('express-async-handler');
 const router = express.Router();
 
-export class UserRouter {
+export class UsersProfileRouter {
 
   @Inject
   private userService: UserService;
@@ -50,18 +50,21 @@ export class UserRouter {
   }));
 
   avatarUpdate = router.post('/avatar', uploadAvatar.single('avatar'), (req, res, next) => {
-    // req.file is the `avatar` file, req.body will hold the text fields, if there were any
+
     // @ts-ignore
-    const file = req.file;
+    const file = req.file; // req.file is the `avatar` file, req.body will hold the text fields, if there were any
     if (!file) {
-      console.log("avatarUpdate API call - No file is available: ", file);
+      console.log("@avatarUpdate API call - No file is available: ", file);
       throw new AppError(400, ErrorMessage.INVALID_FILE, ErrorCode.INVALID_FILE, null);
     } else {
-      console.log('File upload success:', file);
+      console.log('avatar upload success:', file);
       const userId = global.userId;
       this.userService.updateAvatar(userId, file.filename)
       // this.testSubject.testMethod();
       return res.send({
+        // path: file.path,
+        filename: file.filename,
+        mimetype: file.mimetype,
         success: true
       })
     }

@@ -1,7 +1,7 @@
 import { Inject } from "typescript-ioc";
 import { CommonRouter } from "../router/common.router";
 import { SearchRouter } from "../router/search.router";
-import { UserRouter } from "../router/users.router";
+import { UsersProfileRouter } from "../router/users-profile.router";
 import { CategoriesRouter } from "../router/categories.router";
 import { CoursesRouter } from "../router/courses.router";
 import { AuthRouter } from "../router/auth.router";
@@ -11,7 +11,6 @@ import { TutorPostRouter } from "../router/tutor-post.router";
 import { TutorAdminRouter } from "../router/tutor-admin.router";
 import { AuthService } from "../service/auth.service";
 import { AppConstant } from "./constants";
-import { isSuccessHttpCode } from "../../../pana-tutor-lib/util/common-helper";
 import { ErrorCode,ErrorMessage } from "../../../pana-tutor-lib/enum/constants";
 import { isEmpty } from "lodash";
 import { ExpressConfig } from "./express-config";
@@ -22,7 +21,7 @@ export class RouteConfig extends ExpressConfig {
     @Inject
     private authService: AuthService;
     @Inject
-    private userRouter: UserRouter;
+    private userRouter: UsersProfileRouter;
     @Inject
     private authRouter: AuthRouter;
     @Inject

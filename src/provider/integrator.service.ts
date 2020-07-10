@@ -10,7 +10,7 @@ export class IntegratorService {
     private integrationSupport: AbstractIntegrationSupport;
 
     doPost = async (requestObj: any, url: string, useAdminToken: boolean, token?:string) => {
-      console.log('calling api:: ', url)
+      console.log('===> calling api:: ', url)
       console.log('useAdminToken@API client:::', useAdminToken);
       const headers = await this.getHeaders(useAdminToken, token);
       let responseObj = {} as HttpResponse;
@@ -27,12 +27,12 @@ export class IntegratorService {
           responseObj = handleApiError(err)
         );
         const end = (new Date().getTime()) - start;
-        console.log('##doPost API resp:: ', responseObj, ' && timeTaken ms: ', end);
+        console.log('====> doPost API resp:: ', responseObj, ' && timeTaken ms: ', end);
         return responseObj;
     }
 
     doGet = async (context: any, url: string, useAdminToken: boolean, token?:string) => {
-      console.log('calling api:: ', url)
+      console.log('===> calling api:: ', url)
       console.log('useAdminToken@API client:::', useAdminToken)
       const headers = await this.getHeaders(useAdminToken, token);
       let responseObj = {} as HttpResponse;
@@ -49,7 +49,7 @@ export class IntegratorService {
           responseObj = handleApiError(err)
         );
 
-        console.log('##doGet api resp:: ', responseObj);
+        console.log('===> doGet API resp:: ', responseObj);
         return responseObj;
     }
 

@@ -40,7 +40,7 @@ export class WpIntegrationSupport implements AbstractIntegrationSupport {
     }
 
     private doLoginPost = async (requestObj: any, url: string) => {
-        console.log('calling api:: ', url)
+        console.log('====>doLoginPost call api:: ', url)
         let responseObj = {} as HttpResponse;
 
         await axios({
@@ -54,7 +54,7 @@ export class WpIntegrationSupport implements AbstractIntegrationSupport {
             responseObj = handleApiError(err)
           );
 
-          console.log('##doLoginPost API resp:: ', responseObj);
+          console.log('====>doLoginPost API resp:: ', responseObj);
           return responseObj;
     }
 

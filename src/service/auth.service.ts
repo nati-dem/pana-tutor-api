@@ -23,10 +23,9 @@ export class AuthService {
         return await this.apiExecuter.doPost(signupRequest, AppConstant.REGISTER_URL, true);
     }
 
-    saveAuthTokenInCache = async (data) => {
+    saveAuthResponseInCache = async (data) => {
         const userId = this.getUserIdFromToken(data.token);
-        console.log('@saveAuthTokenInCache... userId:', userId)
-        this.appCache.set( AppConstant.USER_TOKEN_KEY+'_'+userId, data.token, 2 * 86400 ); // ttl in sec ~ 2 days
+        this.saveAuthTokenInCache(data.token, userId);
     }
 
     isTokenValid = async (token: string, userId) : Promise<boolean> => {
@@ -36,10 +35,16 @@ export class AuthService {
         } else {
             const tokenResp= await this.apiExecuter.doPost({}, AppConstant.TOKEN_VALIDATION_URL, false, token);
             if (isSuccessHttpCode(tokenResp.status)) {
+                this.saveAuthTokenInCache(token, userId);
                 return true;
             }
         }
         return false;
+    }
+
+    saveAuthTokenInCache = async (token, userId) => {
+        console.log('@saveAuthTokenInCache... userId:', userId)
+        this.appCache.set( AppConstant.USER_TOKEN_KEY+'_'+userId, token, 2 * 86400 ); // ttl in sec ~ 2 days
     }
 
     getUserIdFromToken(token){
