@@ -60,7 +60,7 @@ export class UserService {
         return await this.userDAO.updateUser(reqObj, id);
     }
 
-    findUserFromDB = async (id: number) => {
+    findUserFromDBOrWp = async (id: number) => {
         console.log('getting User from local DB...')
         let result = await this.userDAO.getUserById(id);
         if(result.length === 0){

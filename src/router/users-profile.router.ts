@@ -30,7 +30,7 @@ export class UsersProfileRouter {
     if (userId !== global.userId) {
       throw new AppError(403,ErrorMessage.FORBIDDEN,ErrorCode.FORBIDDEN_ACCESS,null);
     }
-    const resp = await this.userService.findUserFromDB(userId);
+    const resp = await this.userService.findUserFromDBOrWp(userId);
     if(!resp || _.isEmpty(resp) || resp.length === 0 ) {
       throw new AppError(404, ErrorMessage.PROFILE_ERROR, ErrorCode.PROFILE_ERROR, null);
     }
