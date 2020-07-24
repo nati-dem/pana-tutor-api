@@ -176,16 +176,44 @@ CREATE TABLE panalearncom_tutor.tutor_group_pay_history (
 );
 
 CREATE TABLE panalearncom_tutor.users (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    user_id INT UNSIGNED NOT NULL UNIQUE,
+    user_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(128) NOT NULL,
+    nickname VARCHAR(128) NULL,
     email VARCHAR(128) NOT NULL UNIQUE,
     phone VARCHAR(20) NULL,
-    address VARCHAR(128) NULL,
+    address VARCHAR(50) NULL,
+    country VARCHAR(20) NULL,
+    bio VARCHAR(255) NULL,
     user_role ENUM('administrator', 'author', 'contributor', 'instructor', 'subscriber') NOT NULL DEFAULT 'subscriber',
     status ENUM('active', 'pending', 'disabled', 'locked', 'deleted') NOT NULL DEFAULT 'active',
     avatar VARCHAR(128) NULL,
+    time_zone VARCHAR(10) NULL,
+    email_activated ENUM('1', '0') DEFAULT '0',
     create_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+/* in future, enable tutors set their own pricing */
+/* availablity will contain array of json object 
+    [{\"day\": \"monday\", \"from\":\"2PM\", \"to\":\"3PM\" },
+     {\"day\": \"tuesday\", \"from\":\"9PM\", \"to\":\"10PM\" } ]
+*/
+CREATE TABLE panalearncom_tutor.instructor_profile (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNSIGNED NOT NULL,
+    education VARCHAR(128) NULL,
+    work_exp VARCHAR(128) NULL,
+    avg_price_per_hr VARCHAR(10) NULL,
+    availablity VARCHAR(255) NULL,
+    FOREIGN KEY (user_id) REFERENCES panalearncom_tutor.users(user_id)
+);
+
+CREATE TABLE panalearncom_tutor.instructor_course (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNSIGNED NOT NULL,
+    course_id INT UNSIGNED NOT NULL,
+    course_cat INT UNSIGNED NULL,
+    price_per_hr VARCHAR(10) NULL,
+    FOREIGN KEY (user_id) REFERENCES panalearncom_tutor.users(user_id)
 );
 
 /*
@@ -193,4 +221,7 @@ user_reward
 
 user_review
 
+course_setting
+
 */
+

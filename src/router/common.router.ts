@@ -64,7 +64,7 @@ export class CommonRouter {
       throw new AppError(400, ErrorMessage.INVALID_PARAM, ErrorCode.INVALID_PARAM, null);
     }
     // TODO - filter response fields
-    const resp = await this.userService.findUserFromDB(userId);
+    const resp = await this.userService.findUserFromDBOrWp(userId);
     if(!resp || _.isEmpty(resp) || resp.length === 0) {
       throw new AppError(404, ErrorMessage.PROFILE_ERROR, ErrorCode.PROFILE_ERROR, null);
     }

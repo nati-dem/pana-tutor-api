@@ -1,23 +1,20 @@
 import axios from "axios";
 import {HttpResponse} from "../../../pana-tutor-lib/model/api-response.interface";
 import {handleApiError} from "../common/util";
-import {ErrorCode, ErrorMessage} from "../../../pana-tutor-lib/enum/constants";
-import {AppError} from '../common/app-error';
-import {AppCache} from '../config/cache-config';
-import {AppConstant} from '../config/constants';
-import {isSuccessHttpCode} from "../../../pana-tutor-lib/util/common-helper";
-const jwtDecode = require('jwt-decode');
+import { AbstractIntegrationSupport } from "./abstract-integration-support";
+import { Inject } from "typescript-ioc";
 
 export class IntegratorService {
 
-    private appCache = AppCache.getInstance();
+    @Inject
+    private integrationSupport: AbstractIntegrationSupport;
 
     doPost = async (requestObj: any, url: string, useAdminToken: boolean, token?:string) => {
-      console.log('calling api:: ', url)
-      console.log('useAdminToken@API integrator:::', useAdminToken);
+      console.log('===> calling api:: ', url)
+      console.log('useAdminToken@API client:::', useAdminToken);
       const headers = await this.getHeaders(useAdminToken, token);
       let responseObj = {} as HttpResponse;
-
+      const start = new Date().getTime();
       await axios({
           method: 'post',
           url,
@@ -29,14 +26,14 @@ export class IntegratorService {
         }).catch(err =>
           responseObj = handleApiError(err)
         );
-
-        console.log('##doPost API resp:: ', responseObj);
+        const end = (new Date().getTime()) - start;
+        console.log('====> doPost API resp:: ', responseObj, ' && timeTaken ms: ', end);
         return responseObj;
     }
 
     doGet = async (context: any, url: string, useAdminToken: boolean, token?:string) => {
-      console.log('calling api:: ', url)
-      console.log('useAdminToken@API integrator:::', useAdminToken)
+      console.log('===> calling api:: ', url)
+      console.log('useAdminToken@API client:::', useAdminToken)
       const headers = await this.getHeaders(useAdminToken, token);
       let responseObj = {} as HttpResponse;
 
@@ -52,14 +49,14 @@ export class IntegratorService {
           responseObj = handleApiError(err)
         );
 
-        console.log('##doGet api resp:: ', responseObj);
+        console.log('===> doGet API resp:: ', responseObj);
         return responseObj;
     }
 
     getHeaders = async (useAdminToken, token) => {
       let headers:any;
       if(useAdminToken) {
-        const adminToken = await this.generateAppToken();
+        const adminToken = await this.integrationSupport.generateServiceToken();
         headers = { Authorization: `Bearer ${adminToken}` };
       } else if (token) {
         headers = { Authorization: `Bearer ${token}` };
@@ -67,6 +64,7 @@ export class IntegratorService {
       return headers;
     }
 
+    /*
     generateAppToken = async () => {
       let adminToken = this.appCache.get( AppConstant.ADMIN_TOKEN_KEY );
       const currentTime = new Date().getTime();
@@ -90,6 +88,6 @@ export class IntegratorService {
       // save in cache
       this.appCache.set( AppConstant.ADMIN_TOKEN_KEY, adminToken, 2 * 86400 ); // ttl in sec ~ 2 days
       return adminToken;
-  }
+  } */
 
 }

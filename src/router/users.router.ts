@@ -38,7 +38,8 @@ export class UserRouter {
           null
         );
       }
-      const resp = await this.userService.findUserFromDB(userId);
+
+      const resp = await this.userService.findUserFromDBOrWp(userId);
       if (!resp || _.isEmpty(resp) || resp.length === 0) {
         throw new AppError(
           404,
