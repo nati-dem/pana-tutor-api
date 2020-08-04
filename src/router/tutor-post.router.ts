@@ -34,7 +34,7 @@ export class TutorPostRouter {
   upsertGroupPost = router.put('/groups/post', asyncHandler( async (req, res, next) => {
     const reqObj = req.body as BoardPostCreateRequest;
     console.log("## upsertGroupPost req:: ", reqObj);
-    if( !_.isNumber(reqObj.course_id) || reqObj.group_ids.length < 1 || !(reqObj.status in BoardPostStatus)
+    if( !_.isNumber(reqObj.course_id) || _.isEmpty(reqObj.group_ids) || reqObj.group_ids.length < 1 || !(reqObj.status in BoardPostStatus)
         || !(reqObj.post_type in BoardPostType) || _.isEmpty(reqObj.post_title) || _.isEmpty(reqObj.post_content) ) {
       throw new AppError(400, ErrorMessage.INVALID_PARAM, ErrorCode.INVALID_PARAM, null);
     }
