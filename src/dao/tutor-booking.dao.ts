@@ -42,11 +42,34 @@ export class TutorBookingDAO extends BaseDAO {
     return this.update(caller, query, params, id);
   };
 
+  findBookingRequestByStatus = async (orderId, status) => {
+    const query = `SELECT * FROM tutor_booking_request where orderId = ? AND status =? `;
+    const params = [orderId, status];
+    const caller = "findBookingRequestByStatus";
+    return this.find(caller, query, params);
+  };
+
   activateBookingRequest = async (userId, orderId, payAmount, tutorGroupId) => {
-    const query = `UPDATE tutor_booking_request SET status=?, pay_amount=? WHERE student_id = ? AND orderId = ? `;
-    const params = [TutorBookingRequestStatus.active, payAmount, userId, orderId ];
+    const query = `UPDATE tutor_booking_request SET status=?, pay_amount=? , tutor_group_id=? WHERE student_id = ? AND orderId = ? `;
+    const params = [TutorBookingRequestStatus.active, payAmount, tutorGroupId, userId, orderId ];
     const caller = "activateBookingRequest";
     return this.update(caller, query, params, orderId);
+  };
+
+  findCourseTutors = async (courseId) => {
+    const query = `SELECT * FROM instructor_course c where c.course_id = ? `;
+    const params = [courseId];
+    const caller = "findCourseTutors";
+    return this.find(caller, query, params);
+  };
+
+  findActiveCourseTutorGroups = async (courseId, status, userIds) => {
+    const query = `SELECT t.course_id, t.status, g.user_id, g.user_role, g.join_date FROM tutor_group t
+      INNER JOIN tutor_group_members g ON t.id= g.tutor_group_id
+      where t.course_id = ? AND t.status = ? AND g.user_role =? AND g.user_id IN (?) `;
+    const params = [courseId, status, 'instructor', userIds];
+    const caller = "findActiveCourseTutorGroups";
+    return this.find(caller, query, params);
   };
 
 }

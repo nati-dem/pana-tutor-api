@@ -43,11 +43,11 @@ export class PaymentRouter {
     const selectedPkg = _.find(PricingPackages, {id: reqObj.packageId}) as IPricingPackages;
     const itemName = reqObj.courseName
     const unitPrice = selectedPkg.price
-
+    const successReturnUrl = this.successUrl? this.successUrl.replace("<courseId>", reqObj.course_id.toString()) : null;
     const merchantOrderId = reqObj.orderId; // "YOUR_UNIQUE_ID_FOR_THIS_ORDER";  //can also be set null
      // "NUMBER_OF_MINUTES_BEFORE_THE_ORDER_EXPIRES"; //setting null means it never expires
      const checkoutOptions = ypco.checkoutOptions(this.merchantId, merchantOrderId, ypco.checkoutType.Express,
-      this.useSandbox, this.expiresAfter, this.successUrl, this.cancelUrlReturn, this.ipnUrlReturn, this.failureUrlReturn);
+      this.useSandbox, this.expiresAfter, successReturnUrl, this.cancelUrlReturn, this.ipnUrlReturn, this.failureUrlReturn);
       const checkoutItem = {
         "ItemId": reqObj.orderId,
         "ItemName": itemName,
@@ -73,7 +73,7 @@ export class PaymentRouter {
     });
   }));
 
-  yenePayVerify = router.post('/ypay-pdt/verify-and-finalize-booking', asyncHandler( async (req, res, next) => {
+  yPayVerifyAndFinalizeBooking = router.post('/ypay-pdt/verify-and-finalize-booking', asyncHandler( async (req, res, next) => {
       const reqObj : YenePayVerifyRequest = req.body;
       console.log("## yenePayPayVerify reqObj:: ", reqObj);
       const userId = global.userId;
@@ -83,12 +83,15 @@ export class PaymentRouter {
         "transactionId": reqObj.TransactionId,
         "merchantOrderId": reqObj.MerchantOrderId
       }
-      const resp = await this.paymentService.ypayVerify(mappedReq)
-      console.log("## yenePayPayVerify resp:: ", resp);
-      if (!isSuccessHttpCode(resp.status) || !resp.data.includes("result=SUCCESS")) {
-        throw new AppError(resp.status,resp.message,ErrorCode.YPAY_PDT_VERIFY_ERROR,JSON.stringify(resp.data));
+      const pdtResp = await this.paymentService.ypayVerify(mappedReq)
+      console.log("## yenePayPayVerify resp:: ", pdtResp);
+      if (!isSuccessHttpCode(pdtResp.status) || !pdtResp.data.includes("result=SUCCESS")) {
+        throw new AppError(pdtResp.status,pdtResp.message,ErrorCode.YPAY_PDT_VERIFY_ERROR,JSON.stringify(pdtResp.data));
       }
-      this.tutorBookingService.activateBookingRequest(userId, reqObj.MerchantOrderId, reqObj.TotalAmount)
+      if(await this.tutorBookingService.isBookingRequestActivated(reqObj)){
+        throw new AppError(400,ErrorMessage.BOOKING_ALREADY_ACTIVE,ErrorCode.BOOKING_ALREADY_ACTIVE, null);
+      }
+      const resp = await this.tutorBookingService.activateBookingRequest(userId, reqObj)
       res.status(200).end(JSON.stringify(resp));
     }));
 

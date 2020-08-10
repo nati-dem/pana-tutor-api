@@ -23,6 +23,7 @@
     "escape-html": "^1.0.3",
     "express": "~4.16.1",
     "express-async-handler": "^1.1.4",
+    "fecha": "^4.2.0",
     "helmet": "^3.22.0",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",

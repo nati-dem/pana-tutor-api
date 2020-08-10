@@ -107,7 +107,7 @@ CREATE TABLE panalearncom_tutor.tutor_board (
 CREATE TABLE panalearncom_tutor.tutor_group (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     course_id INT UNSIGNED NOT NULL,
-    status ENUM('active', 'locked', 'disabled') NOT NULL DEFAULT 'active',
+    status ENUM('active', 'inactive', 'locked', 'disabled') NOT NULL DEFAULT 'active',
     start_date DATETIME NOT NULL,
     created_by INT UNSIGNED NOT NULL,
     create_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
