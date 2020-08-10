@@ -14,6 +14,8 @@ import { AppConstant } from "./constants";
 import { ErrorCode,ErrorMessage } from "../../../pana-tutor-lib/enum/constants";
 import { isEmpty } from "lodash";
 import { ExpressConfig } from "./express-config";
+import { TutorBookingRouter } from "../router/tutor-booking.router";
+import { PaymentRouter } from "../router/payment.router";
 const jwtDecode = require('jwt-decode');
 
 export class RouteConfig extends ExpressConfig {
@@ -40,6 +42,10 @@ export class RouteConfig extends ExpressConfig {
     private tutorPostRouter: TutorPostRouter;
     @Inject
     private tutorAdminRouter: TutorAdminRouter;
+    @Inject
+    private tutorBookingRouter: TutorBookingRouter;
+    @Inject
+    private paymentRouter: PaymentRouter;
 
     public constructor() {
         super();
@@ -59,31 +65,37 @@ export class RouteConfig extends ExpressConfig {
         this._app.use(`${AppConstant.SERVER_SUB_DIR}/tutor-groups`,this.validateToken,this.tutorGroupRouter.index);
         this._app.use(`${AppConstant.SERVER_SUB_DIR}/tutor-posts`,this.validateToken,this.tutorPostRouter.index);
         this._app.use(`${AppConstant.SERVER_SUB_DIR}/tutor-admin`,this.validateToken,this.tutorAdminRouter.index);
+        this._app.use(`${AppConstant.SERVER_SUB_DIR}/tutor-booking`,this.validateToken,this.tutorBookingRouter.index);
+        this._app.use(`${AppConstant.SERVER_SUB_DIR}/payment`,this.validateToken,this.paymentRouter.index);
         // this._app.all('*', this.validateToken);
       }
 
     validateToken = async (req, res, next) => {
         // if ( req.path == '/') return next();
-        const token = req.headers.authorization ? req.headers.authorization.split(" ")[1]: "";
-        console.log("@token validation middleware:", token);
-        if (!isEmpty(token)) {
-            const decoded = jwtDecode(token);
-            const userId = decoded.data.user.id;
-            const isTokenValid = await this.authService.isTokenValid(token, userId);
-            if (!isTokenValid) {
-                res.status(401).json({
-                    code: ErrorCode.INVALID_AUTH,
-                    message: ErrorMessage.INVALID_AUTH_TOKEN,
-                });
+        try {
+            const token = req.headers.authorization ? req.headers.authorization.split(" ")[1]: null;
+            console.log("@token validation middleware:", token);
+            if (token && !isEmpty(token)) {
+                const decoded = jwtDecode(token);
+                const userId = decoded.data.user.id;
+                const isTokenValid = await this.authService.isTokenValid(token, userId);
+                if (!isTokenValid) {
+                    res.status(401).json({
+                        code: ErrorCode.INVALID_AUTH,
+                        message: ErrorMessage.INVALID_AUTH_TOKEN,
+                    });
+                } else {
+                    global.userId = userId;
+                    next();
+                }
             } else {
-                global.userId = userId;
-                next();
+                throw new Error("Unauthorized");
             }
-        } else {
+        } catch(e){
             res.status(401).json({
-            code: ErrorCode.INVALID_AUTH,
-            message: ErrorMessage.UNAUTHORIZED,
-          });
+                code: ErrorCode.INVALID_AUTH,
+                message: ErrorMessage.UNAUTHORIZED,
+              });
         }
     };
 

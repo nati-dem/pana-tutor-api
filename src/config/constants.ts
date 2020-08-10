@@ -14,4 +14,6 @@ export enum AppConstant {
     QUIZZES_URL = '/wp-json/wp/v2/quiz',
     QUIZ_QUESTIONS_URL = '/wp-json/wp/v2/question_box',
     MEDIA_URL = '/wp-json/wp/v2/media',
+    YPAY_PDT_SANDBOX = 'https://testapi.yenepay.com/api/verify/pdt/',
+    YPAY_PDT = 'https://endpoints.yenepay.com/api/verify/pdt/',
 }

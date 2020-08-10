@@ -79,18 +79,22 @@ CREATE TABLE panalearncom_tutor.quiz_submission (
     FOREIGN KEY (quiz_init_id) REFERENCES panalearncom_tutor.quiz_init(id)
 );
 
-CREATE TABLE panalearncom_tutor.tutor_request (
+CREATE TABLE panalearncom_tutor.tutor_booking_request (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     student_id INT UNSIGNED NOT NULL,
     tutor_ids VARCHAR(50) NULL,
-    course VARCHAR(128) NOT NULL,
-    grade_level INT UNSIGNED NULL,
-    start_date DATETIME NOT NULL,
+    course_id INT UNSIGNED NOT NULL,
+    package_id INT UNSIGNED NOT NULL,
+    grade_level VARCHAR(10) NULL,
+    start_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     duration VARCHAR(25) NULL,
-    group_allowed ENUM('1', '0') NOT NULL DEFAULT '1',
+    group_allowed ENUM('1', '0') NOT NULL DEFAULT '0',
     trial_exp_date DATETIME NULL,
     remark VARCHAR(128) NULL,
-    status ENUM('active', 'pending', 'rejected') NOT NULL DEFAULT 'pending',
+    status ENUM('active', 'inactive', 'init', 'pay_pending', 'failed') NOT NULL DEFAULT 'init',
+    orderId VARCHAR(128) NOT NULL,
+    tutor_group_id INT UNSIGNED NULL,
+    pay_amount VARCHAR(10) NULL,
     req_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

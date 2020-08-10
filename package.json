@@ -34,12 +34,16 @@
     "node-cache": "^5.1.0",
     "nodemailer": "^6.4.10",
     "rotating-file-stream": "^2.1.0",
-    "typescript-ioc": "^3.2.1"
+    "typescript-ioc": "^3.2.1",
+    "uuid": "^8.1.0",
+    "yenepaysdk": "^1.1.6"
   },
   "devDependencies": {
     "@types/express": "^4.17.6",
     "@types/node": "^13.13.12",
+    "deep-extend": "^0.6.0",
     "nodemon": "^2.0.3",
+    "request": "^2.88.2",
     "ts-node": "^8.10.2",
     "tslint": "^6.1.2",
     "typescript": "^3.8.3"
