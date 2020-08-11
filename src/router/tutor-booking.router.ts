@@ -18,10 +18,10 @@ export class TutorBookingRouter {
     res.send( "Hello world!" );
   });
 
-  getBookingRequest = router.get('/booking-request/:courseId', asyncHandler( async (req, res, next) => {
+  validateCourseBookingRequest = router.get('/validate-course/:courseId', asyncHandler( async (req, res, next) => {
     const courseId = req.params.courseId;
     const userId = global.userId;
-    console.log("## getBookingRequest router courseId:: ", courseId, " && userId:",userId);
+    console.log("## validateCourseBookingRequest courseId:: ", courseId, " && userId:",userId);
     if( !courseId || _.isEmpty(courseId) ) {
       throw new AppError(400, ErrorMessage.INVALID_PARAM, ErrorCode.INVALID_PARAM, null);
     }

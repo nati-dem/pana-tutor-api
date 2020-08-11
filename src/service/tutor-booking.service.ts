@@ -7,6 +7,8 @@ import { GroupStatus, GroupMemberStatus } from "../../../pana-tutor-lib/enum/tut
 import { TutorGroupService } from "./tutor-group.service";
 import { TutorGroupRole } from "../../../pana-tutor-lib/enum/user.enum";
 import { format, I18nSettings } from 'fecha';
+import { AppError } from "../common/app-error";
+import { ErrorMessage, ErrorCode } from "../../../pana-tutor-lib/enum/constants";
 
 export class TutorBookingService extends BaseService {
 
@@ -49,35 +51,52 @@ export class TutorBookingService extends BaseService {
   }
 
   isBookingRequestActivated = async ( reqObj: YenePayVerifyRequest) => {
-    const bookingResult = await this.tutorBookingDAO.findBookingRequestByStatus(reqObj.MerchantOrderId, TutorBookingRequestStatus.active)
+    // const bookingResult = await this.tutorBookingDAO.findBookingRequestByStatus(reqObj.MerchantOrderId, TutorBookingRequestStatus.active)
+    const bookingResult = await this.tutorBookingDAO.findBookingRequestByOrderId(reqObj.MerchantOrderId);
     let activated = false;
     console.log('@bookingResult', bookingResult)
     if (bookingResult.length > 0 ) {
       bookingResult.forEach(res => {
-        if(res.tutor_group_id && res.tutor_group_id != null && res.tutor_group_id !== "null"){
+        if(res.status === TutorBookingRequestStatus.active && res.tutor_group_id && res.tutor_group_id != null && res.tutor_group_id !== "null"){
           activated = true;
           return;
         }
       })
+    } else if(!bookingResult || bookingResult.length === 0){
+      throw new AppError(422, "Booking Request not found", ErrorCode.BOOKING_PROCESSING_ERROR, null);
     }
     return activated;
   }
 
   activateBookingRequest = async (userId, reqObj: YenePayVerifyRequest) => {
-    // TODO - add user in group and insert to tutor_booking_request db table
 
     const availableCourseTutors = await this.tutorBookingDAO.findCourseTutors(reqObj.courseId)
     console.log('availableCourseTutors found:', availableCourseTutors)
+    const logDetail = `courseId: ${reqObj.courseId} , userId: ${userId}`
+    if (!availableCourseTutors || availableCourseTutors.length < 1 )
+      throw new AppError(422, "Unable to find course Tutors", ErrorCode.BOOKING_PROCESSING_ERROR, logDetail);
 
-    if (availableCourseTutors.length > 0 ) {
+    const tutorUserId = await this.pickTutor(availableCourseTutors, reqObj.courseId)
+    if(!tutorUserId)
+      throw new AppError(422, "Unable to pick Tutor", ErrorCode.BOOKING_PROCESSING_ERROR, logDetail);
 
-      const tutorUserId = await this.pickTutor(availableCourseTutors, reqObj.courseId)
-      // create tutor group
-      const tutorGroupId = await this.createGroup(reqObj.courseId, tutorUserId)
-      this.addStudentInGroup(reqObj.courseId, tutorGroupId,userId)
+    // create tutor group
+    const tutorGroupId = await this.createGroup(reqObj.courseId, tutorUserId)
+    if(!tutorGroupId)
+      throw new AppError(422, "Error creating tutor Group", ErrorCode.BOOKING_PROCESSING_ERROR, logDetail);
 
-      return await this.tutorBookingDAO.activateBookingRequest(userId, reqObj.MerchantOrderId, reqObj.TotalAmount, tutorGroupId)
+    const addStudentInGroupResult = this.addStudentInGroup(reqObj.courseId, tutorGroupId,userId)
+    if(!addStudentInGroupResult)
+      throw new AppError(422, "Error adding student in tutor Group", ErrorCode.BOOKING_PROCESSING_ERROR, logDetail);
+
+    const activateBooking = await this.tutorBookingDAO.activateBookingRequest(userId, reqObj.MerchantOrderId, reqObj.TotalAmount, tutorGroupId)
+    if(!activateBooking || activateBooking.length < 1)
+      throw new AppError(422, "Error Activating Booking request", ErrorCode.BOOKING_PROCESSING_ERROR, logDetail);
+
+    return {
+      courseId: reqObj.courseId
     }
+
   }
 
   pickTutor = async (availableCourseTutors, courseId) => {
@@ -130,6 +149,7 @@ export class TutorBookingService extends BaseService {
     }
     const addStudentInGroupresult = await this.tutorGroupService.addOrUpdateGroupMember(groupMemberRequest);
     console.log('@addStudentInGroupresult :', addStudentInGroupresult)
+    return addStudentInGroupresult;
   }
 
 }

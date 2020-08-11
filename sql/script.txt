@@ -79,7 +79,7 @@ CREATE TABLE panalearncom_tutor.quiz_submission (
     FOREIGN KEY (quiz_init_id) REFERENCES panalearncom_tutor.quiz_init(id)
 );
 
-CREATE TABLE panalearncom_tutor.tutor_booking_request (
+CREATE TABLE panalearncom_tutor.tutor_booking_cart (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     student_id INT UNSIGNED NOT NULL,
     tutor_ids VARCHAR(50) NULL,
@@ -95,7 +95,8 @@ CREATE TABLE panalearncom_tutor.tutor_booking_request (
     orderId VARCHAR(128) NOT NULL,
     tutor_group_id INT UNSIGNED NULL,
     pay_amount VARCHAR(10) NULL,
-    req_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    req_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES panalearncom_tutor.users(user_id)
 );
 
 /* should there be multiple board instances in given course?
@@ -120,7 +121,8 @@ CREATE TABLE panalearncom_tutor.tutor_group_members (
     user_role ENUM('admin', 'instructor', 'moderator', 'subscriber') NOT NULL DEFAULT 'subscriber',
     status ENUM('active', 'disabled') NOT NULL DEFAULT 'active',
     join_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (tutor_group_id) REFERENCES panalearncom_tutor.tutor_group(id)
+    FOREIGN KEY (tutor_group_id) REFERENCES panalearncom_tutor.tutor_group(id),
+    FOREIGN KEY (user_id) REFERENCES panalearncom_tutor.users(user_id)
 );
 
 CREATE TABLE panalearncom_tutor.tutor_group_meeting (
