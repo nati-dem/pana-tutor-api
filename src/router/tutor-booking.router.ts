@@ -26,6 +26,7 @@ export class TutorBookingRouter {
       throw new AppError(400, ErrorMessage.INVALID_PARAM, ErrorCode.INVALID_PARAM, null);
     }
     const resp = await this.tutorBookingService.checkUserEnrollmentEligiblity(userId,courseId);
+    await this.tutorBookingService.findAvailableCourseTutors(userId,courseId)
     if(resp.success)
       res.status(200).end(JSON.stringify(resp));
     else

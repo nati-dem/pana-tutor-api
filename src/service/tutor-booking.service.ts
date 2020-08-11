@@ -68,14 +68,19 @@ export class TutorBookingService extends BaseService {
     return activated;
   }
 
-  activateBookingRequest = async (userId, reqObj: YenePayVerifyRequest) => {
-
-    const availableCourseTutors = await this.tutorBookingDAO.findCourseTutors(reqObj.courseId)
+  findAvailableCourseTutors = async (userId, courseId) => {
+    const availableCourseTutors = await this.tutorBookingDAO.findCourseTutors(courseId)
     console.log('availableCourseTutors found:', availableCourseTutors)
-    const logDetail = `courseId: ${reqObj.courseId} , userId: ${userId}`
+    const logDetail = `courseId: ${courseId} , userId: ${userId}`
     if (!availableCourseTutors || availableCourseTutors.length < 1 )
       throw new AppError(422, "Unable to find course Tutors", ErrorCode.BOOKING_PROCESSING_ERROR, logDetail);
+    return availableCourseTutors;
+  }
 
+  activateBookingRequest = async (userId, reqObj: YenePayVerifyRequest) => {
+
+    const availableCourseTutors = await this.findAvailableCourseTutors(userId, reqObj.courseId)
+    const logDetail = `courseId: ${reqObj.courseId} , userId: ${userId}`
     const tutorUserId = await this.pickTutor(availableCourseTutors, reqObj.courseId)
     if(!tutorUserId)
       throw new AppError(422, "Unable to pick Tutor", ErrorCode.BOOKING_PROCESSING_ERROR, logDetail);

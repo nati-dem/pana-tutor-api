@@ -64,8 +64,8 @@ export class TutorBookingDAO extends BaseDAO {
   };
 
   findCourseTutors = async (courseId) => {
-    const query = `SELECT * FROM instructor_course c where c.course_id = ? `;
-    const params = [courseId];
+    const query = `SELECT * FROM instructor_course c where c.course_id = ? AND status =? `;
+    const params = [courseId, 'active'];
     const caller = "findCourseTutors";
     return this.find(caller, query, params);
   };

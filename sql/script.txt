@@ -220,6 +220,7 @@ CREATE TABLE panalearncom_tutor.instructor_course (
     course_id INT UNSIGNED NOT NULL,
     course_cat INT UNSIGNED NULL,
     price_per_hr VARCHAR(10) NULL,
+    status ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
     FOREIGN KEY (user_id) REFERENCES panalearncom_tutor.users(user_id)
 );
 
