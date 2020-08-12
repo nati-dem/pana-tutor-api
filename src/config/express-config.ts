@@ -1,4 +1,5 @@
 import express from "express";
+import passport from "passport";
 import { rotatingAccessLogStream } from "./logger-config";
 import { AppConstant } from "./constants";
 import axios from "axios";
@@ -13,7 +14,7 @@ const cors = require("cors");
 export class ExpressConfig {
   protected _app: express.Application;
   @Inject
-  transporterFactory: TransporterFactory
+  transporterFactory: TransporterFactory;
 
   constructor() {}
 
@@ -25,6 +26,7 @@ export class ExpressConfig {
     this._app.use(helmet());
     this._app.use(cors());
     this.configureLogger();
+    this.configurePassport();
     this.configureResponseHeaders();
     this.configureAxios();
     DS.initConPool();
@@ -33,6 +35,11 @@ export class ExpressConfig {
 
   private configureLogger() {
     this._app.use(morgan("combined", { stream: rotatingAccessLogStream }));
+  }
+
+  private configurePassport() {
+    this._app.use(passport.initialize());
+    this._app.use(passport.session());
   }
 
   private configureResponseHeaders() {
@@ -51,7 +58,7 @@ export class ExpressConfig {
     axios.defaults.headers.post["Content-Type"] = "application/json";
   }
 
-  private configureMailTransporter(){
+  private configureMailTransporter() {
     this.transporterFactory.initTransporter("panalearn");
   }
 
