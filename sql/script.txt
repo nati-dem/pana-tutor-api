@@ -215,6 +215,15 @@ CREATE TABLE panalearncom_tutor.instructor_course (
     price_per_hr VARCHAR(10) NULL,
     FOREIGN KEY (user_id) REFERENCES panalearncom_tutor.users(user_id)
 );
+CREATE TABLE panalearncom_tutor.contact_us(
+ id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+ full_name VARCHAR(20) NULL,
+ email VARCHAR(128) NOT NULL UNIQUE,
+ phone VARCHAR(20) NULL,
+ message VARCHAR(128) NULL,
+date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+   
+);
 
 /*
 user_reward
