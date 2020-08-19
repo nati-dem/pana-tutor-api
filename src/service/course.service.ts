@@ -9,7 +9,7 @@ export class CourseService extends BaseService {
 
     getCoursesCategoryById = async (id: number) => {
         /// wp-json/wp/v2/courses?filter[meta_key]=course_category&filter[meta_value]=13&filter[meta_compare]=LIKE
-        const categoryByIdUrl = `${AppConstant.COURSES_URL}?filter[meta_key]=course_category&filter[meta_value]=${id}&filter[meta_compare]=LIKE`
+        const categoryByIdUrl = `${AppConstant.COURSES_URL}?filter[meta_key]=course_categories&filter[meta_value]=${id}&filter[meta_compare]=LIKE`
         return await this.apiExecuter.doGet({context:'edit'}, categoryByIdUrl, true);
     }
 

@@ -78,19 +78,24 @@ CREATE TABLE panalearncom_tutor.quiz_submission (
     FOREIGN KEY (quiz_init_id) REFERENCES panalearncom_tutor.quiz_init(id)
 );
 
-CREATE TABLE panalearncom_tutor.tutor_request (
+CREATE TABLE panalearncom_tutor.tutor_booking_cart (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     student_id INT UNSIGNED NOT NULL,
     tutor_ids VARCHAR(50) NULL,
-    course VARCHAR(128) NOT NULL,
-    grade_level INT UNSIGNED NULL,
-    start_date DATETIME NOT NULL,
+    course_id INT UNSIGNED NOT NULL,
+    package_id INT UNSIGNED NOT NULL,
+    grade_level VARCHAR(10) NULL,
+    start_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     duration VARCHAR(25) NULL,
-    group_allowed ENUM('1', '0') NOT NULL DEFAULT '1',
+    group_allowed ENUM('1', '0') NOT NULL DEFAULT '0',
     trial_exp_date DATETIME NULL,
     remark VARCHAR(128) NULL,
-    status ENUM('active', 'pending', 'rejected') NOT NULL DEFAULT 'pending',
-    req_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    status ENUM('active', 'inactive', 'init', 'pay_pending', 'failed') NOT NULL DEFAULT 'init',
+    orderId VARCHAR(128) NOT NULL,
+    tutor_group_id INT UNSIGNED NULL,
+    pay_amount VARCHAR(10) NULL,
+    req_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES panalearncom_tutor.users(user_id)
 );
 
 /* should there be multiple board instances in given course?
@@ -102,7 +107,7 @@ CREATE TABLE panalearncom_tutor.tutor_board (
 CREATE TABLE panalearncom_tutor.tutor_group (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     course_id INT UNSIGNED NOT NULL,
-    status ENUM('active', 'locked', 'disabled') NOT NULL DEFAULT 'active',
+    status ENUM('active', 'inactive', 'locked', 'disabled') NOT NULL DEFAULT 'active',
     start_date DATETIME NOT NULL,
     created_by INT UNSIGNED NOT NULL,
     create_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -115,7 +120,8 @@ CREATE TABLE panalearncom_tutor.tutor_group_members (
     user_role ENUM('admin', 'instructor', 'moderator', 'subscriber') NOT NULL DEFAULT 'subscriber',
     status ENUM('active', 'disabled') NOT NULL DEFAULT 'active',
     join_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (tutor_group_id) REFERENCES panalearncom_tutor.tutor_group(id)
+    FOREIGN KEY (tutor_group_id) REFERENCES panalearncom_tutor.tutor_group(id),
+    FOREIGN KEY (user_id) REFERENCES panalearncom_tutor.users(user_id)
 );
 
 CREATE TABLE panalearncom_tutor.tutor_group_meeting (
@@ -213,8 +219,10 @@ CREATE TABLE panalearncom_tutor.instructor_course (
     course_id INT UNSIGNED NOT NULL,
     course_cat INT UNSIGNED NULL,
     price_per_hr VARCHAR(10) NULL,
+    status ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
     FOREIGN KEY (user_id) REFERENCES panalearncom_tutor.users(user_id)
 );
+
 CREATE TABLE panalearncom_tutor.contact_us(
  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
  full_name VARCHAR(20) NULL,

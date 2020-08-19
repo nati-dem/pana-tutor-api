@@ -28,6 +28,19 @@ export class TutorPostRouter {
     res.send("Hello world!");
   });
 
+  getAllPostsInGroup = router.get('/groups/:groupId/posts', asyncHandler( async (req, res, next) => {
+    const postStatus = req.query.postStatus;
+    const courseId = parseInt(req.query.courseId, 10);
+    const tutorGroupId = parseInt(req.params.groupId, 10);
+    console.log("## getAllPostsInGroup tutorGroupId:: ", tutorGroupId , ' &postStatus::', postStatus);
+    if( !(postStatus in BoardPostStatus) || !courseId || !tutorGroupId ) {
+      throw new AppError(400, ErrorMessage.INVALID_PARAM, ErrorCode.INVALID_PARAM, null);
+    }
+    const resp = await this.postService.getAllGroupPosts(courseId,tutorGroupId,postStatus);
+    res.status(200).end(JSON.stringify(resp));
+  }));
+
+  /*
   getAllPostsInGroup = router.get(
     "/groups/:groupId/posts",
     asyncHandler(async (req, res, next) => {
@@ -55,8 +68,29 @@ export class TutorPostRouter {
       );
       res.status(200).end(JSON.stringify(resp));
     })
-  );
+  );*/
 
+  upsertGroupPost = router.put('/groups/post', asyncHandler( async (req, res, next) => {
+    const reqObj = req.body as BoardPostCreateRequest;
+    console.log("## upsertGroupPost req:: ", reqObj);
+    if( !_.isNumber(reqObj.course_id) || _.isEmpty(reqObj.group_ids) || reqObj.group_ids.length < 1 || !(reqObj.status in BoardPostStatus)
+        || !(reqObj.post_type in BoardPostType) || _.isEmpty(reqObj.post_title) || _.isEmpty(reqObj.post_content) ) {
+      throw new AppError(400, ErrorMessage.INVALID_PARAM, ErrorCode.INVALID_PARAM, null);
+    }
+    const mappedReqObj = this.transformRequest(reqObj);
+    console.log("request id", reqObj.id);
+    // TODO - only group instructor/admin can create/edit post
+    let resp = {};
+    if (reqObj.id) {
+      resp = await this.postService.updateGroupPost(mappedReqObj);
+    } else {
+      resp = await this.postService.createGroupPost(mappedReqObj);
+    }
+    res.status(200).end(JSON.stringify(resp));
+   }
+  ));
+
+  /*
   upsertGroupPost = router.put(
     "/groups/post",
     asyncHandler(async (req, res, next) => {
@@ -88,7 +122,7 @@ export class TutorPostRouter {
       }
       res.status(200).end(JSON.stringify(resp));
     })
-  );
+  );*/
 
   transformRequest(reqObj: BoardPostCreateRequest) {
     return {

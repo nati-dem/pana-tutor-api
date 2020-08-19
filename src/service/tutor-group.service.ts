@@ -10,9 +10,9 @@ export class TutorGroupService extends BaseService {
   @Inject
   private groupDAO: TutorGroupDAO;
 
-  createGroup = async (req: TutorGroupRequest) => {
+  createGroup = async (req: TutorGroupRequest, userId) => {
     req.status = GroupStatus.active;
-    req.created_by = global.userId;
+    req.created_by = userId;
     const result = await this.groupDAO.createGroup(req);
     if(Array.isArray(result)){
       req.owner.tutor_group_id = result[0].id;

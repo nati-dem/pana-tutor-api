@@ -74,7 +74,8 @@ export class TutorGroupRouter {
     }
     // TODO - ? admin should be the only one creating group
     // TODO - check if course exists and is published
-    const resp = await this.groupService.createGroup(reqObj);
+    const userId = global.userId;
+    const resp = await this.groupService.createGroup(reqObj, userId);
     res.status(200).end(JSON.stringify(resp));
   }));
 
