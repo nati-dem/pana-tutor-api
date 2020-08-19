@@ -150,6 +150,7 @@ export class RouteConfig extends ExpressConfig {
     });
     this._app.use((err, req, res, next) => {
       err.httpStatus = err.httpStatus || 500;
+      console.log('#error has occurred:: ', err)
       res.status(err.httpStatus).json({
         code: err.code,
         message: err.message,

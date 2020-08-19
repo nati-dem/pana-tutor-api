@@ -47,6 +47,8 @@ export class ExpressConfig {
       res.header("Access-Control-Allow-Origin", "*");
       res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
       res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+      res.header("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+      res.header("X-XSS-Protection", "1");
       res.setHeader("Content-Type", "application/json");
       next();
     });
