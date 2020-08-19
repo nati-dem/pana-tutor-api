@@ -9,8 +9,8 @@ export class DS {
         connectionLimit: 15,
         host: process.env.DB_HOST,
         user: process.env.DB_USER,
-        password: process.env.DB_PASS, //"123456"
-        socketPath: process.env.DB_SOCKET,
+        password: "123456", //process.env.DB_PASS,
+        //socketPath: process.env.DB_SOCKET,
         debug: false,
         waitForConnections: true,
         queueLimit: 0,
